@@ -23,6 +23,7 @@ gem 'unicorn'
 gem 'leather', github: 'dvanderbeek/leather', branch: 'master'
 gem 'font-awesome-sass'
 gem 'autoprefixer-rails'
+gem 'annotate'
 
 group :development do
   gem 'foreman'
