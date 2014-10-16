@@ -9,6 +9,7 @@
 #  created_at   :datetime
 #  updated_at   :datetime
 #  nba_id       :integer
+#  division_id  :integer
 #
 
 class Team < ActiveRecord::Base

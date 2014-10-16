@@ -2,26 +2,22 @@
   <div class="col-md-6">
     <h1>Listing teams</h1>
 
-    <table>
-      <thead>
-        <tr>
-          <th colspan="3"></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <% @teams.each do |team| %>
-          <tr>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <% Conference.all.each do |conference| %>
+      <h1><%= conference.name %> Conference</h1>
+      <% conference.divisions.each do |division| %>
+        <h3><%= division.name %> Conference</h3>
+          <% division.teams.each do |team| %>
             <td><%= team.full_name %></td>
             <td><%= link_to 'Show', team %></td>
             <td><%= link_to 'Edit', edit_team_path(team) %></td>
             <td><%= link_to 'Destroy', team, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-
-    <br>
+          <% end %>
+      <% end %>
+    <% end %>
 
     <%= link_to 'New Team', new_team_path %>
   </div>

@@ -9,6 +9,7 @@
 #  created_at   :datetime
 #  updated_at   :datetime
 #  nba_id       :integer
+#  division_id  :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
