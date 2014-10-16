@@ -8,10 +8,17 @@
 #  abbreviation :string(255)
 #  created_at   :datetime
 #  updated_at   :datetime
+#  nba_id       :integer
 #
 
 class Team < ActiveRecord::Base
 
+  belongs_to :division
+
   has_many :players
+
+  def full_name
+    "#{self.city} #{self.mascot}"
+  end
 
 end

@@ -11,7 +11,33 @@
     </div>
   <% end %>
 
+  <div class="form-group">
+    <label for="">City</label>
+    <%= f.text_field :city, :class => "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <label for="">Mascot</label>
+    <%= f.text_field :mascot, :class => "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <label for="">Abbreviation</label>
+    <%= f.text_field :abbreviation, :class => "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <label for="">NBA ID</label>
+    <%= f.number_field :nba_id, :class => "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <label for="">Division</label>
+    <%= collection_select(:division, :division_id, Division.all, :id, :name) %>
+  </div>
+
+
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit 'Save', :class => "btn btn-primary" %>
   </div>
 <% end %>
