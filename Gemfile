@@ -24,6 +24,8 @@ gem 'leather', github: 'dvanderbeek/leather', branch: 'master'
 gem 'font-awesome-sass'
 gem 'autoprefixer-rails'
 gem 'annotate'
+gem 'faraday_middleware'
+gem 'faraday'
 
 group :development do
   gem 'foreman'

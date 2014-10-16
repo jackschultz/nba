@@ -20,6 +20,7 @@ module Nba
     config.active_record.default_timezone = :utc
 
     config.generators do |generate|
+      generate.template_engine :erb
       generate.helper false
       generate.javascript_engine false
       generate.request_specs false
@@ -28,6 +29,8 @@ module Nba
       generate.test_framework :rspec
       generate.view_specs false
     end
+
+    config.autoload_paths += Dir["#{config.root}/lib/**/"]
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
