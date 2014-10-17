@@ -1,4 +1,13 @@
-<p id="notice"><%= notice %></p>
+<h1><%= @team.full_name %></h1>
+
+<% @team.players.each do |player| %>
+  <div class="row">
+    <div class="col-md-6">
+      <%= player.full_name %>
+    </div>
+  </div>
+<% end %>
+
 
 <%= link_to 'Edit', edit_team_path(@team) %> |
 <%= link_to 'Back', teams_path %>
