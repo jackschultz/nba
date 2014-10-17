@@ -17,6 +17,7 @@ class Team < ActiveRecord::Base
 
   belongs_to :division
 
+  has_many :games
   has_many :players
 
   def full_name
