@@ -3,7 +3,7 @@
 <% @team.players.each do |player| %>
   <div class="row">
     <div class="col-md-6">
-      <%= player.full_name %>
+      <%= link_to player.full_name, player_path(player) %>
     </div>
   </div>
 <% end %>
