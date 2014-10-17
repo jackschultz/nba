@@ -6,5 +6,6 @@ Rails.application.routes.draw do
   mount Sidekiq::Web, at: '/sidekiq'
 
   resources :teams
+  resources :players
 
 end
