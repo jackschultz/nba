@@ -10,12 +10,15 @@
       <h1><%= conference.name %> Conference</h1>
       <% conference.divisions.each do |division| %>
         <h3><%= division.name %> Conference</h3>
-          <% division.teams.each do |team| %>
+        <% division.teams.each do |team| %>
+          <div class="row">
             <td><%= team.full_name %></td>
+            <td><%= team.nba_id %></td>
             <td><%= link_to 'Show', team %></td>
             <td><%= link_to 'Edit', edit_team_path(team) %></td>
             <td><%= link_to 'Destroy', team, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-          <% end %>
+          </div>
+        <% end %>
       <% end %>
     <% end %>
 

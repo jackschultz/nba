@@ -29,10 +29,24 @@ module Fetching
       end
     end
 
-    def self.fetch_player_nba_id(purl)
+    def self.fetch_player_information(purl, player)
       response = conn.get(purl)
       if response.success?
         doc = Nokogiri::HTML(response.body)
+        ts = doc.css('#tab-stats')
+        stat_url = ts.first.attributes['href'].value
+        nba_id = stat_url.split('=').last.to_i
+        team_name = doc.css('.player-team').first.children.text
+        team_mascot = team_name.split(' ').last
+        team = Team.find_by_mascot(team_mascot)
+        if team.nil?
+          puts "Couldn't find team #{team_name}"
+          return
+        end
+        player.nba_id = nba_id
+        player.team = team
+        player.save
+        puts "#{player.full_name} plays for #{team_name}"
       else
         false
       end
@@ -52,7 +66,8 @@ module Fetching
             player.last_name = last_name
             player.save
           else
-            fetch_player_information(purl)
+            player = Player.create(first_name: first_name, last_name: last_name)
+            fetch_player_information(purl, player)
           end
         end
       end
@@ -60,7 +75,7 @@ module Fetching
 
   end
 end
-'stats.nba.com/leagueTeamGeneral.html'
+#'stats.nba.com/leagueTeamGeneral.html'
 
 =begin
 def gather_players():
