@@ -29,6 +29,14 @@ module Fetching
       end
     end
 
+    def self.find_team_for_player(team_mascot)
+      team = Team.find_by_mascot(team_mascot)
+      if team.nil?
+        team = Team.find_by_alternate_name(team_mascot)
+      end
+      team
+    end
+
     def self.fetch_player_information(purl, player)
       response = conn.get(purl)
       if response.success?
@@ -38,17 +46,13 @@ module Fetching
         nba_id = stat_url.split('=').last.to_i
         team_name = doc.css('.player-team').first.children.text
         team_mascot = team_name.split(' ').last
-        team = Team.find_by_mascot(team_mascot)
-        if team.nil?
-          puts "Couldn't find team #{team_name}"
-          return
-        end
+        team = find_team_for_player(team_mascot)
         player.nba_id = nba_id
         player.team = team
         player.save
-        puts "#{player.full_name} plays for #{team_name}"
+        puts "#{player.full_name} plays for #{player.team.full_name}"
       else
-        false
+        puts "Couldn't get response for #{player.inspect}"
       end
     end
 
@@ -59,14 +63,15 @@ module Fetching
         doc.css('.playerlink').each do |pdiv|
           purl = pdiv.attributes['href'].value
           underscored_name = purl.split('/').last
-          first_name, last_name = pdiv.children.text.split(',').map(&:strip)
+          last_name, first_name = pdiv.children.text.split(',').map(&:strip)
           player = Player.find_by(underscored_name: underscored_name)
-          if !player.nil?
+          if !player.nil? && !player.team.nil?
             player.first_name = first_name
             player.last_name = last_name
             player.save
+            puts "Found: #{player.full_name} (id #{player.id}) plays for #{player.team.full_name}"
           else
-            player = Player.create(first_name: first_name, last_name: last_name)
+            player = Player.create(first_name: first_name, last_name: last_name, underscored_name: underscored_name)
             fetch_player_information(purl, player)
           end
         end
