@@ -26,6 +26,7 @@
 #  plus_minus :integer
 #  created_at :datetime
 #  updated_at :datetime
+#  fta        :integer
 #
 
 require 'rails_helper'

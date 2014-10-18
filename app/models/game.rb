@@ -18,4 +18,14 @@ class Game < ActiveRecord::Base
 
   has_many :player_game_stats
 
+  def nba_id_string
+    #I should really just store this as a string
+    str_nba_id = self.nba_id.to_s
+    diff = 10 - str_nba_id.length
+    (0..diff-1).each do |i|
+      str_nba_id.insert(0, '0')
+    end
+    str_nba_id
+  end
+
 end

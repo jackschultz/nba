@@ -26,6 +26,7 @@
 #  plus_minus :integer
 #  created_at :datetime
 #  updated_at :datetime
+#  fta        :integer
 #
 
 class PlayerGameStat < ActiveRecord::Base
