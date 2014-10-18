@@ -8,21 +8,7 @@ class TeamsController < ApplicationController
   def show
   end
 
-  def new
-    @team = Team.new
-  end
-
   def edit
-  end
-
-  def create
-    @team = Team.new(team_params)
-
-    if @team.save
-      redirect_to @team, notice: 'Team was successfully created.'
-    else
-      render :new
-    end
   end
 
   def update
@@ -31,11 +17,6 @@ class TeamsController < ApplicationController
     else
       render :edit
     end
-  end
-
-  def destroy
-    @team.destroy
-    redirect_to teams_url, notice: 'Team was successfully destroyed.'
   end
 
   private

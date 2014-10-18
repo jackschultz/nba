@@ -1,0 +1,57 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Minutes</th>
+      <th>FGM</th>
+      <th>FGA</th>
+      <th>FG%</th>
+      <th>FG3M</th>
+      <th>FG3A</th>
+      <th>FG3%</th>
+      <th>FTM</th>
+      <th>FTA</th>
+      <th>FT%</th>
+      <th>OREB</th>
+      <th>DREB</th>
+      <th>REB</th>
+      <th>AST</th>
+      <th>TURN</th>
+      <th>STL</th>
+      <th>BLK</th>
+      <th>FOUL</th>
+      <th>PTS</th>
+      <th>+/-</th>
+      <th>FD</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% stat_lines.each do |stat_line| %>
+      <tr>
+        <td><%= link_to stat_line.player.full_name, stat_line.player %></td>
+        <td><%= stat_line.minutes %></td>
+        <td><%= stat_line.fgm %></td>
+        <td><%= stat_line.fga %></td>
+        <td><%= stat_line.fg_pct %></td>
+        <td><%= stat_line.fg3m %></td>
+        <td><%= stat_line.fg3a %></td>
+        <td><%= stat_line.fg3_pct %></td>
+        <td><%= stat_line.ftm %></td>
+        <td><%= stat_line.fta %></td>
+        <td><%= stat_line.ft_pct %></td>
+        <td><%= stat_line.oreb %></td>
+        <td><%= stat_line.dreb %></td>
+        <td><%= stat_line.reb %></td>
+        <td><%= stat_line.ast %></td>
+        <td><%= stat_line.to %></td>
+        <td><%= stat_line.stl %></td>
+        <td><%= stat_line.blk %></td>
+        <td><%= stat_line.pf %></td>
+        <td><%= stat_line.pts %></td>
+        <td><%= stat_line.plus_minus %></td>
+        <td><%= stat_line.score_fan_duel %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+

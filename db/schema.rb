@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141018151444) do
+ActiveRecord::Schema.define(version: 20141018205358) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,37 +30,10 @@ ActiveRecord::Schema.define(version: 20141018151444) do
   end
 
   create_table "games", force: true do |t|
-    t.integer  "nba_id"
+    t.string   "nba_id"
     t.datetime "date"
     t.integer  "home_team_id"
     t.integer  "away_team_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "player_game_stats", force: true do |t|
-    t.integer  "player_id"
-    t.integer  "game_id"
-    t.integer  "minutes"
-    t.integer  "fga"
-    t.integer  "fgm"
-    t.float    "fg_pct"
-    t.integer  "fg3m"
-    t.integer  "fg3a"
-    t.float    "fg3_pct"
-    t.integer  "ftm"
-    t.integer  "fta"
-    t.integer  "ft_pct"
-    t.integer  "oreb"
-    t.integer  "dreb"
-    t.integer  "rebounds"
-    t.integer  "assists"
-    t.integer  "turnovers"
-    t.integer  "steals"
-    t.integer  "blocks"
-    t.integer  "fouls"
-    t.integer  "points"
-    t.integer  "plus_minus"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -84,15 +57,43 @@ ActiveRecord::Schema.define(version: 20141018151444) do
     t.datetime "updated_at"
   end
 
+  create_table "stat_lines", force: true do |t|
+    t.integer  "game_id"
+    t.integer  "player_id"
+    t.integer  "team_id"
+    t.integer  "minutes"
+    t.integer  "fgm"
+    t.integer  "fga"
+    t.float    "fg_pct"
+    t.integer  "fg3m"
+    t.integer  "fg3a"
+    t.float    "fg3_pct"
+    t.integer  "ftm"
+    t.integer  "fta"
+    t.float    "ft_pct"
+    t.integer  "oreb"
+    t.integer  "dreb"
+    t.integer  "reb"
+    t.integer  "ast"
+    t.integer  "stl"
+    t.integer  "blk"
+    t.integer  "to"
+    t.integer  "pf"
+    t.integer  "pts"
+    t.integer  "plus_minus"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "teams", force: true do |t|
-    t.string   "mascot"
+    t.string   "nickname"
     t.string   "city"
     t.string   "abbreviation"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "nba_id"
     t.integer  "division_id"
-    t.string   "alternate_name"
+    t.string   "alt_nickname"
   end
 
   create_table "users", force: true do |t|

@@ -5,18 +5,17 @@ require "nokogiri"
 require "json"
 
 module Fetching
-  class BoxScores < NbaApi
+  class StatLines < NbaApi
 
-    def self.process_box_score(game_id)
+    def self.process_stat_lines(game_id)
       #game_id must be string of length 10, 0 padded at front
-      game = Game.find_by_nba_id(game_id)
+      game = Game.find(game_id)
       if game.nil?
         raise "No game with nba id #{game_id}"
       end
-      game_id_string = game.nba_id_string
       url = 'http://stats.nba.com/stats/boxscore/'
       params = {}
-      params['GameID'] = game_id_string
+      params['GameID'] = game.nba_id
       params['StartRange'] = 0
       params['EndRange'] = 0
       params['StartPeriod'] = 0
@@ -27,22 +26,23 @@ module Fetching
         result = JSON.parse(resp)['resultSets']
         game_stat_lines = result[4]['rowSet']
         game_stat_lines.each do |game_stat|
-          player = Player.find_by_nba_id(player_stat[4])
-          team = Team.find_by_nba_id(player_stat[1])
+          player = Player.find_by_nba_id(game_stat[4])
+          team = Team.find_by_nba_id(game_stat[1])
+          #we need to check to see if team has all the fields
           if player.nil?
             #now we want to create the player? This could be the easy way to load players...
-            names = player_stat[5].split(' ')
+            names = game_stat[5].split(' ')
             first_name = names[0]
             last_name = names[1..-1].join(' ')
             underscored_name = "#{first_name.downcase}_#{last_name.downcase}"
-            player = Player.create(underscored_name: underscored_name,first_name: first_name, last_name: last_name, nba_id: player_stat[4], team: team)
+            player = Player.create(underscored_name: underscored_name,first_name: first_name, last_name: last_name, nba_id: game_stat[4], team: team)
             puts "New player created Fetching::BoxScores.process_box_score: #{player.inspect}"
           else
             #we want to check to see what team the player is on. We want to change it
             #if this game is the latest game the player has played, set the team (current)
             #as this
           end
-          record_player_game_stat(player, game, team, player_stat)
+          record_player_game_stat(player, game, team, game_stat)
         end
       else
         raise "Bad response from nba Fetching::BoxScores.process_box_score"

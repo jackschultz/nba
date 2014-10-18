@@ -3,7 +3,7 @@
 # Table name: games
 #
 #  id           :integer          not null, primary key
-#  nba_id       :integer
+#  nba_id       :string(255)
 #  date         :datetime
 #  home_team_id :integer
 #  away_team_id :integer

@@ -13,7 +13,7 @@ class CreateStatLines < ActiveRecord::Migration
       t.float :fg3_pct
       t.integer :ftm
       t.integer :fta
-      t.fload :ft_pct
+      t.float :ft_pct
       t.integer :oreb
       t.integer :dreb
       t.integer :reb

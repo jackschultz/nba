@@ -16,7 +16,7 @@ class Player < ActiveRecord::Base
 
   belongs_to :team
 
-  has_many :player_game_stats
+  has_many :stat_lines
 
   def full_name
     "#{self.first_name} #{self.last_name}"

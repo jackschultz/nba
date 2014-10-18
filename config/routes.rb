@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   mount Leather::Engine => '/'
   mount Sidekiq::Web, at: '/sidekiq'
 
-  resources :teams
+  resources :teams, only: [:index, :show, :edit, :update]
   resources :players
 
   resources :games, only: [:index, :show]

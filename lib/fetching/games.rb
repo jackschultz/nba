@@ -7,15 +7,7 @@ require "json"
 module Fetching
   class Games < NbaApi
 
-    def self.find_team_for_player(team_mascot)
-      team = Team.find_by_mascot(team_mascot)
-      if team.nil?
-        team = Team.find_by_alternate_name(team_mascot)
-      end
-      team
-    end
-
-    def self.process_games(date = nil)
+    def self.process_games(date = nil, fetch_stat_lines = true)
       date ||= Time.now.strftime('%F')
       url = 'http://stats.nba.com/stats/scoreboard/'
       params = {}
@@ -30,7 +22,7 @@ module Fetching
         #game info
         ginfo['rowSet'].each do |g|
           game_date = Date.parse(g[0])
-          game_nba_id = g[2].to_i
+          game_nba_id = g[2]
           home_team_id = g[6].to_i
           home_team = Team.find_by_nba_id(home_team_id)
           if home_team.nil?
@@ -47,6 +39,9 @@ module Fetching
           game.away_team_id = away_team.id
           game.date = game_date
           game.save
+          if fetch_stat_lines
+            Fetching::StatLines.process_stat_lines(game.id)
+          end
         end
       else
         raise "Bad response from nba Fetching::Games.process_games"
