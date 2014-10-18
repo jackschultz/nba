@@ -34,4 +34,8 @@ class PlayerGameStat < ActiveRecord::Base
   belongs_to :player
   belongs_to :game
 
+  def score_fan_duel
+    (self.fgm * 2) + (self.fg3m * 3) + (self.ftm * 1) + (self.rebounds * 1.2) + (self.assists * 1.5) + (self.blocks * 2) + (self.steals * 2) + (self.turnovers * -1)
+  end
+
 end
