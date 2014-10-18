@@ -29,7 +29,15 @@ module Fetching
         player_stats.each do |player_stat|
           player = Player.find_by_nba_id(player_stat[4])
           if player.nil?
-            raise "Player not found Fetching::BoxScores.process_box_score"
+            #now we want to create the player? This could be the easy way to load players...
+            names = player_stat[5].split(' ')
+            first_name = names[0]
+            last_name = names[1..-1].join(' ')
+            underscored_name = "#{first_name.downcase}_#{last_name.downcase}"
+            team = Team.find_by_nba_id(player_stat[1])
+            binding.pry
+            player = Player.create(underscored_name: underscored_name,first_name: first_name, last_name: last_name, nba_id: player_stat[4], team: team)
+            puts "Player not found Fetching::BoxScores.process_box_score: #{player.inspect}"
           end
           record_player_game_stat(player, game, player_stat)
         end

@@ -29,7 +29,7 @@ module Fetching
         #tinfo = result[1]
         #game info
         ginfo['rowSet'].each do |g|
-          game_date = Time.parse(g[0])
+          game_date = Date.parse(g[0])
           game_nba_id = g[2].to_i
           home_team_id = g[6].to_i
           home_team = Team.find_by_nba_id(home_team_id)
