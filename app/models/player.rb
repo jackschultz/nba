@@ -22,4 +22,8 @@ class Player < ActiveRecord::Base
     "#{self.first_name} #{self.last_name}"
   end
 
+  def on_team?(team)
+    self.team.id == team.id
+  end
+
 end

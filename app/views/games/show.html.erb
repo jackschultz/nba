@@ -4,3 +4,47 @@
     <h4><%= link_to @game.date, games_date_path(year: @game.date.year, month: @game.date.month, day: @game.date.day) %></h4>
   </div>
 </div>
+
+<div class="row">
+  <h2><%= link_to @game.home_team.full_name, @game.home_team %></h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Minutes</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @game.player_game_stats.each do |player_stat| %>
+      <% if player_stat.player.on_team?(@game.home_team) %>
+        <tr>
+          <td><%= link_to player_stat.player.full_name, player_stat.player %></td>
+          <td><%= player_stat.minutes %></td>
+        </tr>
+      <% end %>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="row">
+  <h2><%= link_to @game.away_team.full_name, @game.away_team %></h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Minutes</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @game.player_game_stats.each do |player_stat| %>
+      <% if player_stat.player.on_team?(@game.away_team) %>
+        <tr>
+          <td><%= link_to player_stat.player.full_name, player_stat.player %></td>
+          <td><%= player_stat.minutes %></td>
+        </tr>
+      <% end %>
+    <% end %>
+    </tbody>
+  </table>
+</div>
