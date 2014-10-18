@@ -4,30 +4,7 @@ require "net/http"
 require "nokogiri"
 
 module Fetching
-  module Players
-
-    def self.build_conn
-      endpoint = 'http://stats.nba.com'
-      connection = Faraday.new(endpoint) do |co|
-        co.request :url_encoded
-        co.adapter  Faraday.default_adapter
-      end
-      connection
-    end
-
-    def self.conn
-      @conn ||=build_conn
-    end
-
-    def self.fetch_from_nba
-      url = 'http://stats.nba.com/frags/stats-site-page-players-directory-active.html'
-      response = conn.get(url)
-      if response.success?
-        response.body
-      else
-        false
-      end
-    end
+  class Players < NbaApi
 
     def self.find_team_for_player(team_mascot)
       team = Team.find_by_mascot(team_mascot)
@@ -57,7 +34,8 @@ module Fetching
     end
 
     def self.process_players
-      resp = fetch_from_nba
+      url = 'http://stats.nba.com/frags/stats-site-page-players-directory-active.html'
+      resp = fetch_from_nba(url)
       if resp
         doc = Nokogiri::HTML(resp)
         doc.css('.playerlink').each do |pdiv|
