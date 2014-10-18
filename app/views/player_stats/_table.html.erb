@@ -1,0 +1,55 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Minutes</th>
+      <th>FGM</th>
+      <th>FGA</th>
+      <th>FG%</th>
+      <th>FG3M</th>
+      <th>FG3A</th>
+      <th>FG3%</th>
+      <th>FTM</th>
+      <th>FTA</th>
+      <th>FT%</th>
+      <th>OREB</th>
+      <th>DREB</th>
+      <th>REB</th>
+      <th>AST</th>
+      <th>TURN</th>
+      <th>STL</th>
+      <th>BLK</th>
+      <th>FOUL</th>
+      <th>PTS</th>
+      <th>+/-</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% player_stats.each do |player_stat| %>
+      <tr>
+        <td><%= link_to player_stat.player.full_name, player_stat.player %></td>
+        <td><%= player_stat.minutes %></td>
+        <td><%= player_stat.fgm %></td>
+        <td><%= player_stat.fga %></td>
+        <td><%= player_stat.fg_pct %></td>
+        <td><%= player_stat.fg3m %></td>
+        <td><%= player_stat.fg3a %></td>
+        <td><%= player_stat.fg3_pct %></td>
+        <td><%= player_stat.ftm %></td>
+        <td><%= player_stat.fta %></td>
+        <td><%= player_stat.ft_pct %></td>
+        <td><%= player_stat.oreb %></td>
+        <td><%= player_stat.dreb %></td>
+        <td><%= player_stat.rebounds %></td>
+        <td><%= player_stat.assists %></td>
+        <td><%= player_stat.turnovers %></td>
+        <td><%= player_stat.steals %></td>
+        <td><%= player_stat.blocks %></td>
+        <td><%= player_stat.fouls %></td>
+        <td><%= player_stat.points %></td>
+        <td><%= player_stat.plus_minus %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
