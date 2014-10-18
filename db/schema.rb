@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(version: 20141018151444) do
     t.integer  "fg3a"
     t.float    "fg3_pct"
     t.integer  "ftm"
+    t.integer  "fta"
     t.integer  "ft_pct"
     t.integer  "oreb"
     t.integer  "dreb"
@@ -62,7 +63,6 @@ ActiveRecord::Schema.define(version: 20141018151444) do
     t.integer  "plus_minus"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "fta"
   end
 
   create_table "players", force: true do |t|

@@ -25,53 +25,50 @@ module Fetching
       resp = fetch_from_nba(url, params)
       if resp
         result = JSON.parse(resp)['resultSets']
-        game_stat_lines = result[4]['rowSet']
-        game_stat_lines.each do |game_stat|
+        player_stats = result[4]['rowSet']
+        player_stats.each do |player_stat|
           player = Player.find_by_nba_id(player_stat[4])
-          team = Team.find_by_nba_id(player_stat[1])
           if player.nil?
             #now we want to create the player? This could be the easy way to load players...
             names = player_stat[5].split(' ')
             first_name = names[0]
             last_name = names[1..-1].join(' ')
             underscored_name = "#{first_name.downcase}_#{last_name.downcase}"
+            team = Team.find_by_nba_id(player_stat[1])
+            binding.pry
             player = Player.create(underscored_name: underscored_name,first_name: first_name, last_name: last_name, nba_id: player_stat[4], team: team)
-            puts "New player created Fetching::BoxScores.process_box_score: #{player.inspect}"
-          else
-            #we want to check to see what team the player is on. We want to change it
-            #if this game is the latest game the player has played, set the team (current)
-            #as this
+            puts "Player not found Fetching::BoxScores.process_box_score: #{player.inspect}"
           end
-          record_player_game_stat(player, game, team, player_stat)
+          record_player_game_stat(player, game, player_stat)
         end
       else
         raise "Bad response from nba Fetching::BoxScores.process_box_score"
       end
     end
 
-    def self.record_player_game_stat(player, game, team, row)
-      stat_line = StatLine.where(player_id: player.id, game_id: game.id, team_id: team.id).first_or_create
-      stat_line.minutes = row[8]
-      stat_line.fgm = row[9]
-      stat_line.fga = row[10]
-      stat_line.fg_pct = row[11]
-      stat_line.fg3m = row[12]
-      stat_line.fg3a = row[13]
-      stat_line.fg3_pct = row[14]
-      stat_line.ftm = row[15]
-      stat_line.fta = row[16]
-      stat_line.ft_pct = row[17]
-      stat_line.oreb = row[18]
-      stat_line.dreb = row[19]
-      stat_line.reb = row[20]
-      stat_line.ast = row[21]
-      stat_line.to = row[22]
-      stat_line.stl = row[23]
-      stat_line.blk = row[24]
-      stat_line.pf = row[25]
-      stat_line.pts = row[26]
-      stat_line.plus_minus = row[27]
-      stat_line.save
+    def self.record_player_game_stat(player, game, row)
+      player_game_stat = PlayerGameStat.where(player_id: player.id, game_id: game.id).first_or_create
+      player_game_stat.minutes = row[8]
+      player_game_stat.fgm = row[9]
+      player_game_stat.fga = row[10]
+      player_game_stat.fg_pct = row[11]
+      player_game_stat.fg3m = row[12]
+      player_game_stat.fg3a = row[13]
+      player_game_stat.fg3_pct = row[14]
+      player_game_stat.ftm = row[15]
+      player_game_stat.fta = row[16]
+      player_game_stat.ft_pct = row[17]
+      player_game_stat.oreb = row[18]
+      player_game_stat.dreb = row[19]
+      player_game_stat.rebounds = row[20]
+      player_game_stat.assists = row[21]
+      player_game_stat.turnovers = row[22]
+      player_game_stat.steals = row[23]
+      player_game_stat.blocks = row[24]
+      player_game_stat.fouls = row[25]
+      player_game_stat.points = row[26]
+      player_game_stat.plus_minus = row[27]
+      player_game_stat.save
     end
 
   end
