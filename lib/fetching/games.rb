@@ -20,6 +20,7 @@ module Fetching
 
     def self.process_games(date = nil, fetch_stat_lines = true)
       date ||= Time.now.strftime('%F')
+      Rails.logger.info "Fetching::Games.process_games -> Processing for #{date}"
       url = 'http://stats.nba.com/stats/scoreboard/'
       params = {}
       params['LeagueID'] = '00'
@@ -32,20 +33,20 @@ module Fetching
         #tinfo = result[1]
         #game info
         ginfo['rowSet'].each do |g|
+          game_date = Date.parse(g[0])
+          game_nba_id = g[2]
+          home_team_id = g[6].to_i
+          home_team = Team.find_by_nba_id(home_team_id)
+          if home_team.nil?
+            Rails.logger.info "Can't find home team by nba id Fetching::Games.process_games team_id:#{home_team_id}"
+          end
+          away_team_id = g[7].to_i
+          away_team = Team.find_by_nba_id(away_team_id)
+          if away_team.nil?
+            Rails.logger.info "Can't find away team by nba id Fetching::Games.process_games team_id:#{away_team_id}"
+            next
+          end
           Game.transaction do #just in case
-            game_date = Date.parse(g[0])
-            game_nba_id = g[2]
-            home_team_id = g[6].to_i
-            home_team = Team.find_by_nba_id(home_team_id)
-            if home_team.nil?
-              puts "Can't find home team by nba id Fetching::Games.process_games team_id:#{home_team_id}"
-            end
-            away_team_id = g[7].to_i
-            away_team = Team.find_by_nba_id(away_team_id)
-            if away_team.nil?
-              puts "Can't find away team by nba id Fetching::Games.process_games team_id:#{away_team_id}"
-              next
-            end
             game = Game.find_or_create_by(nba_id: game_nba_id)
             game.home_team_id = home_team.id
             game.away_team_id = away_team.id
@@ -57,7 +58,7 @@ module Fetching
           end
         end
       else
-        raise "Bad response from nba Fetching::Games.process_games"
+        Rails.logger "Bad response from nba Fetching::Games.process_games"
       end
 
     end

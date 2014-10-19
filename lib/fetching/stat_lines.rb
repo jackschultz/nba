@@ -11,8 +11,10 @@ module Fetching
       #game_id must be string of length 10, 0 padded at front
       game = Game.find(game_id)
       if game.nil?
-        raise "No game with nba id #{game_id}"
+        Rails.logger.warn "No game with nba id #{game_id}"
+        return
       end
+      Rails.logger.info "Fetching stat lines for game: #{game_id}"
       url = 'http://stats.nba.com/stats/boxscore/'
       params = {}
       params['GameID'] = game.nba_id
@@ -36,7 +38,7 @@ module Fetching
             last_name = names[1..-1].join(' ')
             underscored_name = "#{first_name.downcase}_#{last_name.downcase}"
             player = Player.create(underscored_name: underscored_name,first_name: first_name, last_name: last_name, nba_id: game_stat[4], team: team)
-            puts "New player created Fetching::BoxScores.process_box_score: #{player.inspect}"
+            Rails.logger.info "New player created Fetching::BoxScores.process_box_score: #{player.inspect}"
           else
             #we want to check to see what team the player is on. We want to change it
             #if this game is the latest game the player has played, set the team (current)
@@ -45,7 +47,7 @@ module Fetching
           record_player_game_stat(player, game, team, game_stat)
         end
       else
-        raise "Bad response from nba Fetching::BoxScores.process_box_score"
+        Rails.logger.info "Bad response from nba Fetching::BoxScores.process_box_score"
       end
     end
 

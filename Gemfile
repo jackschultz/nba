@@ -5,7 +5,7 @@ ruby '2.1.2'
 gem 'airbrake'
 gem 'bourbon', '~> 3.2.1'
 gem 'coffee-rails'
-gem 'sidekiq'
+gem 'sidekiq', '~> 3.2.5'
 gem 'sinatra', require: false
 gem 'slim'
 gem 'email_validator'
@@ -26,7 +26,6 @@ gem 'autoprefixer-rails'
 gem 'annotate'
 gem 'faraday_middleware'
 gem 'faraday'
-gem 'typhoeus'
 
 group :development do
   gem 'foreman'
