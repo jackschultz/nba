@@ -17,6 +17,7 @@ class Player < ActiveRecord::Base
   belongs_to :team
 
   has_many :stat_lines
+  has_many :site_player_infos
 
   def full_name
     "#{self.first_name} #{self.last_name}"
@@ -24,6 +25,39 @@ class Player < ActiveRecord::Base
 
   def on_team?(team)
     self.team.id == team.id
+  end
+
+  def avg_minutes
+    minutes = self.stat_line.map(&:minutes)
+    minutes.inject(:+).to_f / minutes.length
+  end
+
+  def avg_fan_duel_points
+    self.stat_lines.played
+  end
+
+  def fan_duel_points_per_minute
+    self.avg_fan_duel_points / self.avg_minutes
+  end
+
+  def minutes
+    data = Hash.new(0)
+    #default hash?
+    (0..40).each do |num|
+      data[num] = []
+    end
+    StatLine.played.each do |stat|
+      data[stat.minutes] << stat.score_fan_duel
+    end
+    ret = []
+    (0..40).each do |num|
+      if data[num].length == 0
+        ret << 0
+      else
+        ret << data[num].inject{ |sum, el| sum + el }.to_f / data[num].length
+      end
+    end
+    ret
   end
 
 end

@@ -15,4 +15,6 @@ Rails.application.routes.draw do
     day:        /\d{1,2}/
   }
 
+  resources :stats, only: [:index]
+
 end
