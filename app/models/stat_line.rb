@@ -36,8 +36,14 @@ class StatLine < ActiveRecord::Base
   belongs_to :team
   belongs_to :player
 
+  scope :played, -> { where.not(:pts => nil) }
+
   def score_fan_duel
-    (self.pts + (self.reb * 1.2) + (self.ast * 1.5) + (self.blk * 2) + (self.stl * 2) + (self.to * -1)).round(2)
+    if self.pts.nil?
+      0
+    else
+      (self.pts + (self.reb * 1.2) + (self.ast * 1.5) + (self.blk * 2) + (self.stl * 2) + (self.to * -1)).round(2)
+    end
   end
 
 end

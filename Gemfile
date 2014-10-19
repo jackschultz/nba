@@ -26,6 +26,7 @@ gem 'autoprefixer-rails'
 gem 'annotate'
 gem 'faraday_middleware'
 gem 'faraday'
+gem 'typhoeus'
 
 group :development do
   gem 'foreman'
