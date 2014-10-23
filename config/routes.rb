@@ -17,4 +17,6 @@ Rails.application.routes.draw do
 
   resources :stats, only: [:index]
 
+  resources :sites, only: [:index, :show]
+
 end
