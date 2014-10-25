@@ -10,12 +10,14 @@
 #  position        :string(255)
 #  created_at      :datetime
 #  updated_at      :datetime
+#  alt_position    :string(255)
 #
 
 class SitePlayerInfo < ActiveRecord::Base
 
   belongs_to :site
   belongs_to :player
+  belongs_to :game
 
   scope :point_guards , -> { where(:position => "pg") }
   scope :shooting_guards , -> { where(:position => "sg") }

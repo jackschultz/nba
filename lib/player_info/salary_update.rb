@@ -34,7 +34,6 @@ module PlayerInfo
       site = Site.find_by_name("Draft Day")
       CSV.foreach("lib/player_info/draft_day_salaries.csv", {headers: true}) do |row|
         position = row[0]
-
         full_name = row[1].split(' ')
         first_name = full_name[0]
         last_name = full_name[1..-1].join(' ')

@@ -10,15 +10,16 @@
 #  position        :string(255)
 #  created_at      :datetime
 #  updated_at      :datetime
+#  alt_position    :string(255)
 #
 
 FactoryGirl.define do
   factory :site_player_info do
     site_id 1
-player_id 1
-alt_player_name "MyString"
-salary 1
-position "MyString"
+    player_id 1
+    alt_player_name "MyString"
+    salary 1
+    position "MyString"
   end
 
 end
