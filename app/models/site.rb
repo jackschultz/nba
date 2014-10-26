@@ -11,6 +11,6 @@
 
 class Site < ActiveRecord::Base
 
-  has_many :site_player_infos
+  has_many :player_costs
 
 end

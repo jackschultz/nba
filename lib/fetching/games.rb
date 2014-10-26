@@ -14,7 +14,7 @@ module Fetching
         enumerable = start_date.upto(end_date)
       end
       enumerable.each do |date|
-        process_games(date)
+        process_games(date, false)
       end
     end
 

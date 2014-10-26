@@ -17,5 +17,6 @@ class Game < ActiveRecord::Base
   belongs_to :away_team, class_name: "Team"
 
   has_many :stat_lines
+  has_many :player_costs
 
 end

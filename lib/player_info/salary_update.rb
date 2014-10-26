@@ -3,9 +3,12 @@ require 'CSV'
 module PlayerInfo
   class SalaryUpdate
 
-    def self.update_draft_kings
+    def self.update_draft_kings(date=nil)
+      date ||= DateTime.now
+      date_string = date.strftime('%F')
       site = Site.find_by_name("Draft Kings")
-      CSV.foreach("lib/player_info/DKSalaries.csv", {headers: true}) do |row|
+      filename = "lib/player_info/dk_salaries-#{date_string}.csv"
+      CSV.foreach(filename, {headers: true}) do |row|
         position = row[0]
         full_name = row[1].split(' ')
         first_name = full_name[0]
@@ -15,8 +18,13 @@ module PlayerInfo
           Rails.logger.info "Cannot find player with name: #{row[1]}"
           next
         end
+        game = Game.where(date: date).where('home_team_id=? OR away_team_id=?', player.team_id, player.team_id).first
+        if game.nil?
+          Rails.logger.info "Cannot find game for date #{date} and player #{player.inspect}"
+          next
+        end
         salary = row[2]
-        sinfo = site.site_player_infos.where(player_id: player.id).first_or_create
+        sinfo = site.player_costs.where(player_id: player.id, game_id: game.id).first_or_create
         sinfo.position = position
         sinfo.salary = salary
         sinfo.save
