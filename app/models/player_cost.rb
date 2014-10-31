@@ -28,4 +28,42 @@ class PlayerCost < ActiveRecord::Base
   scope :guards , -> { where("position = ? or position = ?", "pg", "sg") }
   scope :forwards, -> { where("position = ? or position = ?", "pf", "sf") }
 
+  scope :from_games, lambda{ |game_ids| where(game_id: game_ids) }
+
+  def sg?
+    self.position == "SG"
+  end
+
+  def pg?
+    self.position == "PG"
+  end
+
+  def g?
+    self.position == "G"
+  end
+
+  def sf?
+    self.position == "SF"
+  end
+
+  def pf?
+    self.position == "PF"
+  end
+
+  def f?
+    self.position == "F"
+  end
+
+  def c?
+    self.position == "C"
+  end
+
+  def u?
+    self.position == "U"
+  end
+
+  def expected_points_per_dollar
+    self.expected_points / self.salary
+  end
+
 end

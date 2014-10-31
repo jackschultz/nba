@@ -1,3 +1,4 @@
+/*
 function minuteData (data) {
    $('#chartex').highcharts({
     chart: {
@@ -30,3 +31,5 @@ $(document).ready(function() {
     }
   });
 });
+*/
+

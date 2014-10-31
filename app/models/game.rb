@@ -16,7 +16,10 @@ class Game < ActiveRecord::Base
   belongs_to :home_team, class_name: "Team"
   belongs_to :away_team, class_name: "Team"
 
-  has_many :stat_lines
   has_many :player_costs
+  has_many :stat_lines
+
+  scope :today, -> {where(date: Date.today.strftime('%F'))}
+  scope :on_date, lambda{ |date| where("date = ?", date) }
 
 end

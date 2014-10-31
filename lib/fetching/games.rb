@@ -7,14 +7,14 @@ require "json"
 module Fetching
   class Games < NbaApi
 
-    def self.process_games_range(start_date, end_date, reverse = true)
+    def self.process_games_range(start_date, end_date, reverse = true, fetch_stat_lines = true)
       if reverse
         enumerable = end_date.downto(start_date)
       else
         enumerable = start_date.upto(end_date)
       end
       enumerable.each do |date|
-        process_games(date, false)
+        process_games(date, fetch_stat_lines)
       end
     end
 
