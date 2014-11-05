@@ -30,6 +30,8 @@ class PlayerCost < ActiveRecord::Base
 
   scope :from_games, lambda{ |game_ids| where(game_id: game_ids) }
 
+  attr_accessor :weight_slope
+
   def sg?
     self.position == "SG"
   end

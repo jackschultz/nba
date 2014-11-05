@@ -1,48 +1,6 @@
 module Lineups
   module Generate
 
-=begin
-    def self.generate_lineups(player_costs)
-      lineups = []
-      player_costs.each_index do |index|
-        lineup = DraftKingsLineup.new(total_salary: 50000)
-        potential_lineups = test_player_cost(lineup, player_costs[index..-1])
-        lineups += potential_lineups
-        puts "Num lineups: #{potential_lineups.count}"
-        binding.pry
-      end
-
-      binding.pry
-      lineups.sort!{|a,b| b.expected_points <=> a.expected_points};
-      return lineups
-    end
-
-    def self.test_player_cost(lineup, pcs)
-      min_salary = 3000
-      pcs = pcs.map{|pc| lineup.available_positions.include?(pc.position) ? pc : nil}.compact
-      if lineup.complete? || pcs.empty? || (lineup.total_salary - lineup.current_cost) < min_salary
-        return [lineup]
-      else
-        lineup.add_player_cost(pcs.first)
-        # remove all where positions are already present
-        potential_lineups = []
-        pcs.each_index do |index|
-          #return test_player_cost(lineup, pcs[1..-1])
-          puts "new lineup #{index}"
-          potential_lineups += test_player_cost(clone_lineup(lineup), pcs[index+1..-1])
-        end
-        return potential_lineups
-      end
-    end
-
-    def self.clone_lineup(lineup)
-      new_lineup = DraftKingsLineup.new(total_salary: 50000)
-      new_lineup.players = lineup.players.clone
-      new_lineup.available_positions = lineup.available_positions.clone
-      new_lineup
-    end
-=end
-
     def self.filter_player_list(lineup, players)
       current_player_ids = lineup.player_ids
       players.select{|p| current_player_ids.exclude?(p.player_id)}
@@ -51,6 +9,46 @@ module Lineups
     def self.filter_player_cost(lineup, players)
       remaining_cost = lineup.remaining_cost
       players.select{|p| p.salary < remaining_cost}
+    end
+
+    def self.filter_and_slope(players)
+
+      top_at_salary = []
+      #first thing is to get only the most expected points per salary
+      players.sort_by!{|p| p.salary}.reverse
+      test_player = players[0]
+      players[1..-1].each_with_index do |player, index|
+        if test_player.salary == player.salary
+          if test_player.expected_points < player.expected_points
+            test_player = player
+          end
+        elsif test_player.salary < player.salary
+          top_at_salary << test_player
+          test_player = player
+        end
+      end
+      top_at_salary.push(test_player)
+
+      top_at_salary.sort_by!{|p| p.expected_points}.reverse!
+
+      non_dominated = []
+      #we need to make sure that we remove the dominated ones
+      test_player = top_at_salary[0]
+      top_at_salary[1..-1].each_with_index do |player, index|
+        if test_player.salary > player.salary
+          non_dominated << test_player
+          test_player = player
+        end
+      end
+      non_dominated << test_player
+
+      non_dominated[1..-1].each_with_index do |player, index|
+        prev_player = players[index-1]
+        if player.salary == prev_player.salary
+        end
+        player.weight_slope = (player.expected_points - prev_player.expected_points) / (player.salary - prev_player.salary)
+      end
+      non_dominated
     end
 
     def self.generate_lineups_iter(pcs)
@@ -63,42 +61,43 @@ module Lineups
       forwards = pcs.map{|pc| pc.c? && pc.expected_points != 0 ? pc : nil}.compact
       utilities = pcs.map{|pc| pc.u? && pc.expected_points != 0 ? pc : nil}.compact
 
-      chop_size = 2
-
-      pgcount = point_guards.length
       point_guards.sort_by!{|p| p.expected_points}.reverse
-      point_guards = point_guards[0..(pgcount.to_f/chop_size).round]
-
-      sgcount = shooting_guards.length
       shooting_guards.sort_by!{|p| p.expected_points}.reverse
-      shooting_guards = shooting_guards[0..(sgcount.to_f/chop_size).round]
-
-      pfcount = power_forwards.length
       power_forwards.sort_by!{|p| p.expected_points}.reverse
-      power_forwards = power_forwards[0..(pfcount.to_f/chop_size).round]
-
-      sfcount = small_forwards.length
       small_forwards.sort_by!{|p| p.expected_points}.reverse
-      small_forwards = small_forwards[0..(sfcount.to_f/chop_size).round]
-
-      ccount = centers.length
       centers.sort_by!{|p| p.expected_points}.reverse
-      centers = centers[0..(ccount.to_f/chop_size).round]
-
-      gcount = guards.length
       guards.sort_by!{|p| p.expected_points}.reverse
-      guards = guards[0..(gcount.to_f/chop_size).round]
-
-      fcount = forwards.length
       forwards.sort_by!{|p| p.expected_points}.reverse
-      forwards = forwards[0..(fcount.to_f/chop_size).round]
-
-      ucount = utilities.length
       utilities.sort_by!{|p| p.expected_points}.reverse
-      utilities = utilities[0..(ucount.to_f/chop_size).round]
 
-      binding.pry
+      pgs = filter_and_slope(point_guards)
+      sgs = filter_and_slope(shooting_guards)
+      pfs = filter_and_slope(power_forwards)
+      sfs = filter_and_slope(small_forwards)
+      cs = filter_and_slope(centers)
+      gs = filter_and_slope(guards)
+      fs = filter_and_slope(forwards)
+      us = filter_and_slope(utilities)
 
+      test_lineup = DraftKingsLineup.new(total_salary: 50000)
+      test_lineup.point_guard = pgs.shift
+      test_lineup.shooting_guard = sgs.shift
+      test_lineup.power_forward = pfs.shift
+      test_lineup.small_forward = sfs.shift
+      test_lineup.center = cs.shift
+      test_lineup.guard = gs.shift
+      test_lineup.forward = fs.shift
+      test_lineup.utility = us.shift
+
+      remaining_players = pgs + sgs + pfs + sfs + cs + gs + fs + us
+      remaining_players.sort_by!{|p| p.weight_slope}.reverse
+
+    end
+
+  end
+end
+
+=begin
       lineups = []
       test_lineup = DraftKingsLineup.new(total_salary: 50000)
       point_guards.each do |pg|
@@ -146,7 +145,8 @@ module Lineups
         end
       end
       lineups
-    end
 
-  end
-end
+
+
+
+=end
