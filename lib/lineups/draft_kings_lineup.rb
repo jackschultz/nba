@@ -47,5 +47,15 @@ module Lineups
       self.lineup.map(&:player_id)
     end
 
+    def duplicates
+      ids = self.player_ids
+      duplicates = ids.select{|element| ids.count(element) > 1 }.uniq
+      duplicate_players = []
+      duplicates.each do |duplicate|
+        duplicate_players << self.lineup.select{|d| duplicates.include?(d.player_id)}
+      end
+      duplicate_players
+    end
+
   end
 end

@@ -8,6 +8,38 @@
   </div>
 <% end %>
 
+<% @lineups.each do |lineup| %>
+  <div>
+    Point Guard: <%= lineup.point_guard.player.full_name %>
+  </div>
+  <div>
+    Shooting Guard: <%= lineup.shooting_guard.player.full_name %>
+  </div>
+  <div>
+    Small Forward: <%= lineup.small_forward.player.full_name %>
+  </div>
+  <div>
+    Power Forward: <%= lineup.power_forward.player.full_name %>
+  </div>
+  <div>
+    Center: <%= lineup.center.player.full_name %>
+  </div>
+  <div>
+    Guard: <%= lineup.guard.player.full_name %>
+  </div>
+  <div>
+    Forward: <%= lineup.forward.player.full_name %>
+  </div>
+  <div>
+    Utility: <%= lineup.utility.player.full_name %>
+  </div>
+  <div>
+    Total Expected: <%= lineup.expected_points %>
+  </div>
+  <div>
+    Total Salary: <%= lineup.current_cost %>
+  </div>
+<% end %>
 
 <table class="table">
   <thead>

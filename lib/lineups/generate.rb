@@ -40,35 +40,49 @@ module Lineups
           test_player = player
         end
       end
-      non_dominated << test_player
 
+      non_dominated.reverse!
       non_dominated[1..-1].each_with_index do |player, index|
         prev_player = players[index-1]
-        if player.salary == prev_player.salary
-        end
         player.weight_slope = (player.expected_points - prev_player.expected_points) / (player.salary - prev_player.salary)
       end
       non_dominated
     end
 
-    def self.generate_lineups_iter(pcs)
+    def self.generate_lineups(pcs)
+
+      lineup = generate_lineup(pcs)
+
+      final_lineups = []
+      lineup.duplicates.each do |dup_group|
+        dup_group.each do |dup|
+          final_lineups << generate_lineup(pcs.delete(dup))
+        end
+      end.empty? and begin
+        final_lineups << lineup
+      end
+      final_lineups
+    end
+
+    def self.generate_lineup(pcs)
+      ### Returns an array of possible lineups
       point_guards = pcs.map{|pc| pc.pg? && pc.expected_points != 0 ? pc : nil}.compact
       shooting_guards = pcs.map{|pc| pc.sg? && pc.expected_points != 0 ? pc : nil}.compact
       power_forwards = pcs.map{|pc| pc.pf? && pc.expected_points != 0 ? pc : nil}.compact
       small_forwards = pcs.map{|pc| pc.sf? && pc.expected_points != 0 ? pc : nil}.compact
       centers = pcs.map{|pc| pc.c? && pc.expected_points != 0 ? pc : nil}.compact
-      guards = pcs.map{|pc| pc.c? && pc.expected_points != 0 ? pc : nil}.compact
-      forwards = pcs.map{|pc| pc.c? && pc.expected_points != 0 ? pc : nil}.compact
+      guards = pcs.map{|pc| pc.g? && pc.expected_points != 0 ? pc : nil}.compact
+      forwards = pcs.map{|pc| pc.f? && pc.expected_points != 0 ? pc : nil}.compact
       utilities = pcs.map{|pc| pc.u? && pc.expected_points != 0 ? pc : nil}.compact
 
-      point_guards.sort_by!{|p| p.expected_points}.reverse
-      shooting_guards.sort_by!{|p| p.expected_points}.reverse
-      power_forwards.sort_by!{|p| p.expected_points}.reverse
-      small_forwards.sort_by!{|p| p.expected_points}.reverse
-      centers.sort_by!{|p| p.expected_points}.reverse
-      guards.sort_by!{|p| p.expected_points}.reverse
-      forwards.sort_by!{|p| p.expected_points}.reverse
-      utilities.sort_by!{|p| p.expected_points}.reverse
+      point_guards.sort_by!{|p| p.expected_points}.reverse!
+      shooting_guards.sort_by!{|p| p.expected_points}.reverse!
+      power_forwards.sort_by!{|p| p.expected_points}.reverse!
+      small_forwards.sort_by!{|p| p.expected_points}.reverse!
+      centers.sort_by!{|p| p.expected_points}.reverse!
+      guards.sort_by!{|p| p.expected_points}.reverse!
+      forwards.sort_by!{|p| p.expected_points}.reverse!
+      utilities.sort_by!{|p| p.expected_points}.reverse!
 
       pgs = filter_and_slope(point_guards)
       sgs = filter_and_slope(shooting_guards)
@@ -90,7 +104,69 @@ module Lineups
       test_lineup.utility = us.shift
 
       remaining_players = pgs + sgs + pfs + sfs + cs + gs + fs + us
-      remaining_players.sort_by!{|p| p.weight_slope}.reverse
+      remaining_players.sort_by!{|p| p.weight_slope}
+
+      remaining_players.each do |player|
+        if player.pg?
+          prev = test_lineup.point_guard
+          test_lineup.point_guard = player
+          if !test_lineup.valid_cost?
+            test_lineup.point_guard = prev
+            break
+          end
+        elsif player.sg?
+          prev = test_lineup.shooting_guard
+          test_lineup.shooting_guard = player
+          if !test_lineup.valid_cost?
+            test_lineup.shooting_guard = prev
+            break
+          end
+        elsif player.sf?
+          prev = test_lineup.small_forward
+          test_lineup.small_forward = player
+          if !test_lineup.valid_cost?
+            test_lineup.small_forward = prev
+            break
+          end
+        elsif player.pf?
+          prev = test_lineup.power_forward
+          test_lineup.power_forward = player
+          if !test_lineup.valid_cost?
+            test_lineup.power_forward = prev
+            break
+          end
+        elsif player.c?
+          prev = test_lineup.center
+          test_lineup.center = player
+          if !test_lineup.valid_cost?
+            test_lineup.center = prev
+            break
+          end
+        elsif player.g?
+          prev = test_lineup.guard
+          test_lineup.guard = player
+          if !test_lineup.valid_cost?
+            test_lineup.guard = prev
+            break
+          end
+        elsif player.f?
+          prev = test_lineup.forward
+          test_lineup.forward = player
+          if !test_lineup.valid_cost?
+            test_lineup.forward = prev
+            break
+          end
+        elsif player.u?
+          prev = test_lineup.utility
+          test_lineup.utility = player
+          if !test_lineup.valid_cost?
+            test_lineup.utility = prev
+            break
+          end
+        end
+      end
+
+      test_lineup
 
     end
 
