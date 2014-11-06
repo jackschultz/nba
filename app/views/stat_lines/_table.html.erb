@@ -22,11 +22,11 @@
       <th>FOUL</th>
       <th>PTS</th>
       <th>+/-</th>
-      <th>FD</th>
+      <th>DK</th>
     </tr>
   </thead>
   <tbody>
-    <% stat_lines.each do |stat_line| %>
+    <% stat_lines.sort_by{|sl| sl.score_draft_kings}.reverse.each do |stat_line| %>
       <tr>
         <td><%= link_to stat_line.player.full_name, stat_line.player %></td>
         <td><%= stat_line.minutes %></td>
@@ -49,7 +49,7 @@
         <td><%= stat_line.pf %></td>
         <td><%= stat_line.pts %></td>
         <td><%= stat_line.plus_minus %></td>
-        <td><%= stat_line.score_fan_duel %></td>
+        <td><%= stat_line.score_draft_kings %></td>
       </tr>
     <% end %>
   </tbody>
