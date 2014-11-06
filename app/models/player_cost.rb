@@ -32,6 +32,15 @@ class PlayerCost < ActiveRecord::Base
 
   attr_accessor :weight_slope
 
+  def actual_points_dk
+    stat_line = StatLine.find_by_game_id_and_player_id(self.game.id, self.player.id)
+    if stat_line
+      stat_line.score_draft_kings
+    else
+      nil
+    end
+  end
+
   def sg?
     self.position == "SG"
   end

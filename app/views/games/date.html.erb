@@ -48,6 +48,7 @@
       <th>Team</th>
       <th>Position</th>
       <th>Expected Points</th>
+      <th>Actual Points DK</th>
       <th>Salary</th>
     </tr>
   </thead>
@@ -58,6 +59,7 @@
         <td><%= player_cost.player.team.full_name %></td>
         <td><%= player_cost.position%></td>
         <td><%= number_with_precision(player_cost.expected_points, precision: 2) %></td>
+        <td><%= player_cost.actual_points_dk %></td>
         <td><%= player_cost.salary %></td>
       </tr>
     <% end %>
