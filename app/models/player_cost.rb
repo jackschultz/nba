@@ -37,8 +37,12 @@ class PlayerCost < ActiveRecord::Base
     if stat_line
       stat_line.score_draft_kings
     else
-      nil
+      0
     end
+  end
+
+  def points
+    self.actual_points_dk || self.expected_points
   end
 
   def sg?

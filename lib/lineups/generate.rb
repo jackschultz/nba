@@ -19,7 +19,7 @@ module Lineups
       test_player = players[0]
       players[1..-1].each_with_index do |player, index|
         if test_player.salary == player.salary
-          if test_player.expected_points < player.expected_points
+          if test_player.points < player.points
             test_player = player
           end
         elsif test_player.salary < player.salary
@@ -29,7 +29,7 @@ module Lineups
       end
       top_at_salary.push(test_player)
 
-      top_at_salary.sort_by!{|p| p.expected_points}.reverse!
+      top_at_salary.sort_by!{|p| p.points}.reverse!
 
       non_dominated = []
       #we need to make sure that we remove the dominated ones
@@ -43,8 +43,8 @@ module Lineups
 
       non_dominated.reverse!
       non_dominated[1..-1].each_with_index do |player, index|
-        prev_player = players[index-1]
-        player.weight_slope = (player.expected_points - prev_player.expected_points) / (player.salary - prev_player.salary)
+        prev_player = players[index]
+        player.weight_slope = (player.points - prev_player.points) / (player.salary - prev_player.salary)
       end
       non_dominated
     end
@@ -56,7 +56,9 @@ module Lineups
       final_lineups = []
       lineup.duplicates.each do |dup_group|
         dup_group.each do |dup|
-          final_lineups << generate_lineup(pcs.delete(dup))
+          pcs_array = pcs.to_a
+          pcs_array.delete(dup)
+          final_lineups << generate_lineup(pcs_array)
         end
       end.empty? and begin
         final_lineups << lineup
@@ -66,23 +68,23 @@ module Lineups
 
     def self.generate_lineup(pcs)
       ### Returns an array of possible lineups
-      point_guards = pcs.map{|pc| pc.pg? && pc.expected_points != 0 ? pc : nil}.compact
-      shooting_guards = pcs.map{|pc| pc.sg? && pc.expected_points != 0 ? pc : nil}.compact
-      power_forwards = pcs.map{|pc| pc.pf? && pc.expected_points != 0 ? pc : nil}.compact
-      small_forwards = pcs.map{|pc| pc.sf? && pc.expected_points != 0 ? pc : nil}.compact
-      centers = pcs.map{|pc| pc.c? && pc.expected_points != 0 ? pc : nil}.compact
-      guards = pcs.map{|pc| pc.g? && pc.expected_points != 0 ? pc : nil}.compact
-      forwards = pcs.map{|pc| pc.f? && pc.expected_points != 0 ? pc : nil}.compact
-      utilities = pcs.map{|pc| pc.u? && pc.expected_points != 0 ? pc : nil}.compact
+      point_guards = pcs.map{|pc| pc.pg? && pc.points != 0 ? pc : nil}.compact
+      shooting_guards = pcs.map{|pc| pc.sg? && pc.points != 0 ? pc : nil}.compact
+      power_forwards = pcs.map{|pc| pc.pf? && pc.points != 0 ? pc : nil}.compact
+      small_forwards = pcs.map{|pc| pc.sf? && pc.points != 0 ? pc : nil}.compact
+      centers = pcs.map{|pc| pc.c? && pc.points != 0 ? pc : nil}.compact
+      guards = pcs.map{|pc| pc.g? && pc.points != 0 ? pc : nil}.compact
+      forwards = pcs.map{|pc| pc.f? && pc.points != 0 ? pc : nil}.compact
+      utilities = pcs.map{|pc| pc.u? && pc.points != 0 ? pc : nil}.compact
 
-      point_guards.sort_by!{|p| p.expected_points}.reverse!
-      shooting_guards.sort_by!{|p| p.expected_points}.reverse!
-      power_forwards.sort_by!{|p| p.expected_points}.reverse!
-      small_forwards.sort_by!{|p| p.expected_points}.reverse!
-      centers.sort_by!{|p| p.expected_points}.reverse!
-      guards.sort_by!{|p| p.expected_points}.reverse!
-      forwards.sort_by!{|p| p.expected_points}.reverse!
-      utilities.sort_by!{|p| p.expected_points}.reverse!
+      point_guards.sort_by!{|p| p.points}.reverse!
+      shooting_guards.sort_by!{|p| p.points}.reverse!
+      power_forwards.sort_by!{|p| p.points}.reverse!
+      small_forwards.sort_by!{|p| p.points}.reverse!
+      centers.sort_by!{|p| p.points}.reverse!
+      guards.sort_by!{|p| p.points}.reverse!
+      forwards.sort_by!{|p| p.points}.reverse!
+      utilities.sort_by!{|p| p.points}.reverse!
 
       pgs = filter_and_slope(point_guards)
       sgs = filter_and_slope(shooting_guards)

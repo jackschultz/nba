@@ -39,6 +39,10 @@ module Lineups
       self.lineup.map(&:expected_points).sum
     end
 
+    def actual_points_dk
+      self.lineup.map(&:actual_points_dk).compact.sum
+    end
+
     def lineup
       [@point_guard, @shooting_guard, @small_forward, @power_forward, @center, @guard, @forward, @utility].compact
     end
