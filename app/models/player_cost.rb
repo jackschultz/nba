@@ -46,7 +46,7 @@ class PlayerCost < ActiveRecord::Base
   end
 
   def points
-    self.actual_points_dk || self.expected_points
+    self[:actual_points_dk] || self.expected_points
   end
 
   def sg?
