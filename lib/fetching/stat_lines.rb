@@ -44,10 +44,20 @@ module Fetching
             #if this game is the latest game the player has played, set the team (current)
             #as this
           end
-          record_player_game_stat(player, game, team, game_stat)
+          stat_line = record_player_game_stat(player, game, team, game_stat)
+          record_actual_points(stat_line)
         end
       else
         Rails.logger.info "Bad response from nba Fetching::BoxScores.process_box_score"
+      end
+    end
+
+    def self.record_actual_points(stat_line)
+      player_costs = stat_line.game.player_costs.find_by_player_id(stat_line.player.id)
+      if !player_costs.nil?
+        player_costs.each do |pc|
+          pc.actual_cost_dk = stat_line.score_draft_kings
+        end
       end
     end
 
@@ -74,6 +84,7 @@ module Fetching
       stat_line.pts = row[26]
       stat_line.plus_minus = row[27]
       stat_line.save
+      stat_line
     end
 
   end
