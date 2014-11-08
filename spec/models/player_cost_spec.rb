@@ -12,6 +12,7 @@
 #  updated_at       :datetime
 #  expected_points  :float
 #  actual_points_dk :float
+#  healthy          :boolean          default(TRUE)
 #
 
 require 'rails_helper'
