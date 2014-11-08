@@ -1,6 +1,29 @@
 module Lineups
   module Generate
 
+    def self.generate_lineups_ids(pcs_ids)
+      pcs = PlayerCosts.find_all_by_id(pcs_ids)
+      generate_lineups(pcs)
+    end
+
+    def self.generate_lineups(pcs)
+
+      lineup = generate_lineup(pcs)
+
+      final_lineups = []
+      duplicates = lineup.duplicates
+      duplicates.each do |dup|
+        pcs_array = pcs.to_a
+        duplicates.each do |other_dup|
+          pcs_array.delete(dup) if dup.id != other_dup.id
+        end
+        final_lineups << generate_lineup(pcs_array)
+      end.empty? and begin
+        final_lineups << lineup
+      end
+      final_lineups
+    end
+
     def self.filter_player_list(lineup, players)
       current_player_ids = lineup.player_ids
       players.select{|p| current_player_ids.exclude?(p.player_id)}
@@ -47,23 +70,6 @@ module Lineups
         player.weight_slope = (player.points - prev_player.points) / (player.salary - prev_player.salary)
       end
       non_dominated
-    end
-
-    def self.generate_lineups(pcs)
-
-      lineup = generate_lineup(pcs)
-
-      final_lineups = []
-      lineup.duplicates.each do |dup_group|
-        dup_group.each do |dup|
-          pcs_array = pcs.to_a
-          pcs_array.delete(dup)
-          final_lineups << generate_lineup(pcs_array)
-        end
-      end.empty? and begin
-        final_lineups << lineup
-      end
-      final_lineups
     end
 
     def self.generate_lineup(pcs)

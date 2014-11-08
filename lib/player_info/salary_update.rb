@@ -35,19 +35,22 @@ module PlayerInfo
     end
 
     def self.generate_other_player_costs(pc)
-      if pc.pg? || pc.sg?
+      pcs_by_position = pc.site.player_costs.where(player_id: pc.player.id, game_id: pc.game.id).map(&:position)
+      if pc.pg? || pc.sg? && !pcs_by_position.include?("G")
         gpc = pc.dup
         gpc.position = "G"
         gpc.save
       end
-      if pc.sf? || pc.pf?
+      if pc.sf? || pc.pf? && !pcs_by_position.include?("F")
         gpc = pc.dup
         gpc.position = "F"
         gpc.save
       end
-      gpc = pc.dup
-      gpc.position = "U"
-      gpc.save
+      if !pcs_by_position.include?("U")
+        gpc = pc.dup
+        gpc.position = "U"
+        gpc.save
+      end
 
     end
 

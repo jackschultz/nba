@@ -42,7 +42,10 @@ module Fetching
           else
             #we want to check to see what team the player is on. We want to change it
             #if this game is the latest game the player has played, set the team (current)
-            #as this
+            if player.team.id != team.id
+              player.team = team
+              player.save
+            end
           end
           stat_line = record_player_game_stat(player, game, team, game_stat)
           record_actual_points(stat_line)
@@ -53,10 +56,10 @@ module Fetching
     end
 
     def self.record_actual_points(stat_line)
-      player_costs = stat_line.game.player_costs.find_by_player_id(stat_line.player.id)
+      player_costs = stat_line.game.player_costs.where(player_id: stat_line.player.id)
       if !player_costs.nil?
         player_costs.each do |pc|
-          pc.actual_cost_dk = stat_line.score_draft_kings
+          pc.actual_points_dk = stat_line.score_draft_kings
         end
       end
     end
