@@ -127,49 +127,42 @@ module Lineups
           test_lineup.shooting_guard = player
           if !test_lineup.valid_cost?
             test_lineup.shooting_guard = prev
-            break
           end
         elsif player.sf?
           prev = test_lineup.small_forward
           test_lineup.small_forward = player
           if !test_lineup.valid_cost?
             test_lineup.small_forward = prev
-            break
           end
         elsif player.pf?
           prev = test_lineup.power_forward
           test_lineup.power_forward = player
           if !test_lineup.valid_cost?
             test_lineup.power_forward = prev
-            break
           end
         elsif player.c?
           prev = test_lineup.center
           test_lineup.center = player
           if !test_lineup.valid_cost?
             test_lineup.center = prev
-            break
           end
         elsif player.g?
           prev = test_lineup.guard
           test_lineup.guard = player
           if !test_lineup.valid_cost?
             test_lineup.guard = prev
-            break
           end
         elsif player.f?
           prev = test_lineup.forward
           test_lineup.forward = player
           if !test_lineup.valid_cost?
             test_lineup.forward = prev
-            break
           end
         elsif player.u?
           prev = test_lineup.utility
           test_lineup.utility = player
           if !test_lineup.valid_cost?
             test_lineup.utility = prev
-            break
           end
         end
       end
