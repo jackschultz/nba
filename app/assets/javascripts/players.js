@@ -74,10 +74,17 @@ $(document).ready(function() {
 
 
   $("#generate-lineup").click(function() {
+
+    var game_ids = [];
+    $('.ginfo:checked').each(function() {
+      game_ids.push($(this).data('gid'));
+    });
+
     var data = {};
     data.year = parseInt($("#date-info").data('year'), 10);
     data.month = parseInt($("#date-info").data('month'), 10);
     data.day = parseInt($("#date-info").data('day'), 10);
+    data.games = game_ids;
     $.ajax({
       url: '/lineups',
       type: 'GET',

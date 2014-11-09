@@ -2,7 +2,12 @@ class LineupsController < ApplicationController
   before_action :set_date, only: [:index]
 
   def index
-    @games = Game.on_date(@date)
+    if params[:games].empty?
+      @games = Game.on_date(@date)
+    else
+      gids = params[:games].map{|gid| gid.to_i}
+      @games = Game.find(gids)
+    end
     @player_costs = []
     @player_costs = PlayerCost.from_games(@games.map(&:id)).where(healthy: true)
     @lineup = Lineups::Generate.generate_lineups(@player_costs)
