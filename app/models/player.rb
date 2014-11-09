@@ -71,4 +71,10 @@ class Player < ActiveRecord::Base
     ret
   end
 
+  def to_json
+    data = {}
+    data[:full_name] = self.full_name
+    data
+  end
+
 end

@@ -73,5 +73,65 @@ $(document).ready(function() {
   });
 
 
+  $("#generate-lineup").click(function() {
+    var data = {};
+    data.year = parseInt($("#date-info").data('year'), 10);
+    data.month = parseInt($("#date-info").data('month'), 10);
+    data.day = parseInt($("#date-info").data('day'), 10);
+    $.ajax({
+      url: '/lineups',
+      type: 'GET',
+      data: data,
+      async: true,
+      dataType: "json",
+      success: function (data) {
+        $("#lineup-salary").text(data.salary);
+        $("#lineup-expected-points").text(data.expected_points);
+
+        var p = data.players.point_guard;
+        $("#lineup-pg").find(".name").text(p.player.full_name);
+        $("#lineup-pg").find(".salary").text(p.salary);
+        $("#lineup-pg").find(".expected-points").text(p.expected_points);
+
+        p = data.players.shooting_guard;
+        $("#lineup-sg").find(".name").text(p.player.full_name);
+        $("#lineup-sg").find(".salary").text(p.salary);
+        $("#lineup-sg").find(".expected-points").text(p.expected_points);
+
+        p = data.players.small_forward;
+        $("#lineup-sf").find(".name").text(p.player.full_name);
+        $("#lineup-sf").find(".salary").text(p.salary);
+        $("#lineup-sf").find(".expected-points").text(p.expected_points);
+
+        p = data.players.power_forward;
+        $("#lineup-pf").find(".name").text(p.player.full_name);
+        $("#lineup-pf").find(".salary").text(p.salary);
+        $("#lineup-pf").find(".expected-points").text(p.expected_points);
+
+        p = data.players.center;
+        $("#lineup-c").find(".name").text(p.player.full_name);
+        $("#lineup-c").find(".salary").text(p.salary);
+        $("#lineup-c").find(".expected-points").text(p.expected_points);
+
+        p = data.players.guard;
+        $("#lineup-g").find(".name").text(p.player.full_name);
+        $("#lineup-g").find(".salary").text(p.salary);
+        $("#lineup-g").find(".expected-points").text(p.expected_points);
+
+        p = data.players.forward;
+        $("#lineup-f").find(".name").text(p.player.full_name);
+        $("#lineup-f").find(".salary").text(p.salary);
+        $("#lineup-f").find(".expected-points").text(p.expected_points);
+
+        p = data.players.utility;
+        $("#lineup-u").find(".name").text(p.player.full_name);
+        $("#lineup-u").find(".salary").text(p.salary);
+        $("#lineup-u").find(".expected-points").text(p.expected_points);
+      }
+    });
+
+
+  });
+
 });
 

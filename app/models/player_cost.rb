@@ -86,4 +86,14 @@ class PlayerCost < ActiveRecord::Base
     self.expected_points / self.salary
   end
 
+  def to_json
+    data = {}
+    data[:position] = self.position
+    data[:salary] = self.salary
+    data[:expected_points] = self.expected_points
+    data[:healthy] = self.healthy
+    data[:player] = self.player.to_json
+    data
+  end
+
 end

@@ -21,7 +21,13 @@ module Lineups
       end.empty? and begin
         final_lineups << lineup
       end
-      final_lineups
+      valid_lineups = []
+      final_lineups.each do |fl|
+        if fl.valid_players?
+          valid_lineups << fl
+        end
+      end
+      return valid_lineups.sort_by{|l| l.expected_points}.last
     end
 
     def self.filter_player_list(lineup, players)

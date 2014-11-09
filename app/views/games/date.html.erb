@@ -1,3 +1,5 @@
+<div id="date-info" data-year="<%= @date.year %>" data-month="<%= @date.month %>" data-day="<%= @date.day %>"></div>
+
 <h1><%= @date %></h1>
 
 <% @games.each do |game| %>
@@ -8,41 +10,82 @@
   </div>
 <% end %>
 
-<% @lineups.each do |lineup| %>
-  <div>
-    Point Guard: <%= lineup.point_guard.player.full_name %>
+<div class="row">
+  <div class="col-md-6">
+    <button class="btn btn-success" id="generate-lineup">Generate Lineup</button>
   </div>
-  <div>
-    Shooting Guard: <%= lineup.shooting_guard.player.full_name %>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Pos</th>
+          <th>Name</th>
+          <th>Salary</th>
+          <th>Expected Points</th>
+        </tr>
+      </thead>
+        <tr id="lineup-pg">
+          <td class="position">PG</td>
+          <td class="name"></td>
+          <td class="salary"></td>
+          <td class="expected-points"></td>
+        </tr>
+        <tr id="lineup-sg">
+          <td class="position">SG</td>
+          <td class="name"></td>
+          <td class="salary"></td>
+          <td class="expected-points"></td>
+        </tr>
+        <tr id="lineup-sf">
+          <td class="position">SF</td>
+          <td class="name"></td>
+          <td class="salary"></td>
+          <td class="expected-points"></td>
+        </tr>
+        <tr id="lineup-pf">
+          <td class="position">PF</td>
+          <td class="name"></td>
+          <td class="salary"></td>
+          <td class="expected-points"></td>
+        </tr>
+        <tr id="lineup-c">
+          <td class="position">C</td>
+          <td class="name"></td>
+          <td class="salary"></td>
+          <td class="expected-points"></td>
+        </tr>
+        <tr id="lineup-g">
+          <td class="position">G</td>
+          <td class="name"></td>
+          <td class="salary"></td>
+          <td class="expected-points"></td>
+        </tr>
+        <tr id="lineup-f">
+          <td class="position">F</td>
+          <td class="name"></td>
+          <td class="salary"></td>
+          <td class="expected-points"></td>
+        </tr>
+        <tr id="lineup-u">
+          <td class="position">U</td>
+          <td class="name"></td>
+          <td class="salary"></td>
+          <td class="expected-points"></td>
+        </tr>
+      </tbody>
+    </table>
+    <div>
+      Total Salary: <span id="lineup-salary"></span>
+    </div>
+    <div>
+      Expected Points: <span id="lineup-expected-points"></span>
+    </div>
   </div>
-  <div>
-    Small Forward: <%= lineup.small_forward.player.full_name %>
-  </div>
-  <div>
-    Power Forward: <%= lineup.power_forward.player.full_name %>
-  </div>
-  <div>
-    Center: <%= lineup.center.player.full_name %>
-  </div>
-  <div>
-    Guard: <%= lineup.guard.player.full_name %>
-  </div>
-  <div>
-    Forward: <%= lineup.forward.player.full_name %>
-  </div>
-  <div>
-    Utility: <%= lineup.utility.player.full_name %>
-  </div>
-  <div>
-    Total Expected: <%= lineup.expected_points %>
-  </div>
-  <div>
-    Total Actual DK: <%= lineup.actual_points_dk %>
-  </div>
-  <div>
-    Total Salary: <%= lineup.current_cost %>
-  </div>
-<% end %>
+</div>
+
 
 <div class="row">
   <div class="col-md-6">

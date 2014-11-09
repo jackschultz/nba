@@ -51,10 +51,30 @@ module Lineups
       self.lineup.map(&:player_id)
     end
 
+    def valid_players?
+      player_ids.uniq.count == 8
+    end
+
     def duplicates
       ids = self.player_ids
       duplicates = ids.select{|element| ids.count(element) > 1 }.uniq
       self.lineup.select{|d| duplicates.include?(d.player_id)}
+    end
+
+    def to_json
+      data = {}
+      data[:players] = {}
+      data[:players][:point_guard] = self.point_guard.to_json
+      data[:players][:shooting_guard] = self.shooting_guard.to_json
+      data[:players][:small_forward] = self.small_forward.to_json
+      data[:players][:power_forward] = self.power_forward.to_json
+      data[:players][:center] = self.center.to_json
+      data[:players][:guard] = self.guard.to_json
+      data[:players][:forward] = self.forward.to_json
+      data[:players][:utility] = self.utility.to_json
+      data[:expected_points] = self.expected_points
+      data[:salary] = self.current_cost
+      data
     end
 
   end
