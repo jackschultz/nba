@@ -15,6 +15,8 @@ Rails.application.routes.draw do
     day:        /\d{1,2}/
   }
 
+  resources :player_costs, only: [:update]
+
   resources :stats, only: [:index]
 
   resources :sites, only: [:index, :show]

@@ -8,7 +8,15 @@
   </div>
 <% end %>
 
-<div>
+<div class="row">
+  <div class="col-md-6">
+    <h4>In</h4>
+    <%= render partial: "player_costs/table", locals: {player_costs: @player_costs.where(healthy: true), healthy: true} %>
+  </div>
+  <div class="col-md-6">
+    <h4>Out</h4>
+    <%= render partial: "player_costs/table", locals: {player_costs: @player_costs.where(healthy: false), healthy: false} %>
+  </div>
 </div>
 
 
@@ -48,27 +56,3 @@
   </div>
 <% end %>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Team</th>
-      <th>Position</th>
-      <th>Expected Points</th>
-      <th>Actual Points DK</th>
-      <th>Salary</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @player_costs.each do |player_cost| %>
-      <tr>
-        <td><%= player_cost.player.full_name %></td>
-        <td><%= player_cost.player.team.full_name %></td>
-        <td><%= player_cost.position%></td>
-        <td><%= number_with_precision(player_cost.expected_points, precision: 2) %></td>
-        <td><%= player_cost.actual_points_dk %></td>
-        <td><%= player_cost.salary %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>

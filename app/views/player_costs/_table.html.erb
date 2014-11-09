@@ -1,0 +1,31 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Pos</th>
+      <th>Name</th>
+      <th>Salary</th>
+      <th>Expected Points</th>
+      <th>Out</th>
+    </tr>
+  </thead>
+  <% if healthy %>
+    <tbody class="pcs-healthy">
+  <% else%>
+    <tbody class="pcs-unhealthy">
+  <% end %>
+    <% player_costs.sort_by{|pc| pc.expected_points}.reverse.each do |pc| %>
+      <tr pcid="<%= pc.id %>" gid"<%= pc.game.id %>">
+        <td><%= pc.position %></td>
+        <td><%= pc.player.full_name %></td>
+        <td class="pc-salary"><%= pc.salary %></td>
+        <td class="pc-expected-points"><%= number_with_precision(pc.expected_points, precision: 2) %></td>
+        <% if healthy %>
+          <td><button class="btn btn-warning pc-out">Out</button></td>
+        <% else%>
+          <td><button class="btn btn-warning pc-in">In</button></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
