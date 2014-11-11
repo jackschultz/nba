@@ -11,7 +11,7 @@ class LineupsController < ApplicationController
     @player_costs = []
     @player_costs = PlayerCost.from_games(@games.map(&:id)).where(healthy: true)
     @lineup = Lineups::Generate.generate_lineups(@player_costs)
-    render json: @lineup.to_json
+    render json: [@lineup.first.to_json, @lineup.last.to_json]
   end
 
   private

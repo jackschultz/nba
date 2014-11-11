@@ -33,6 +33,22 @@ class PlayerCost < ActiveRecord::Base
 
   attr_accessor :weight_slope
 
+  def set_expected_points!
+    beginning_of_season = Date.new(2014, 10, 28)
+    prev_game_ids = Game.where(date: beginning_of_season..self.game.date-1.day).map(&:id)
+    stat_lines = StatLine.from_games(prev_game_ids).where(player_id: self.player_id).played
+    if stat_lines.length == 0
+      self[:expected_points] = 0
+    elsif stat_lines.length == 1
+      self[:expected_points] = stat_lines.first.score_draft_kings
+    elsif stat_lines.length == 2
+      self[:expected_points] = (stat_lines.first.score_draft_kings + stat_lines.first.score_draft_kings)/2.0
+    else
+      self[:expected_points] = stat_lines[(stat_lines.length/2.0).round].score_draft_kings
+    end
+    self.save
+  end
+
   def actual_points_dk
     if self[:actual_points_dk].nil?
       stat_line = StatLine.find_by_game_id_and_player_id(self.game.id, self.player.id)

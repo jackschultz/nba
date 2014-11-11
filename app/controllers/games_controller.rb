@@ -12,7 +12,6 @@ class GamesController < ApplicationController
     @player_costs = []
     @player_costs = PlayerCost.from_games(@games.map(&:id))
     @player_costs.to_a.sort! { |a, b|  a.expected_points <=> b.expected_points }.reverse!
-    @lineups = Lineups::Generate.generate_lineups(@player_costs)
   end
 
   def show

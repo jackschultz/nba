@@ -73,6 +73,7 @@ module Lineups
       data[:players][:forward] = self.forward.to_json
       data[:players][:utility] = self.utility.to_json
       data[:expected_points] = self.expected_points
+      data[:actual_points_dk] = self.actual_points_dk
       data[:salary] = self.current_cost
       data
     end

@@ -30,6 +30,7 @@ module PlayerInfo
         sinfo.save
         sinfo.expected_points = row[-1].to_f #sinfo.player.avg_draft_kings
         sinfo.save
+        sinfo.set_expected_points!
         generate_other_player_costs(sinfo)
       end
     end
@@ -40,16 +41,19 @@ module PlayerInfo
         gpc = pc.dup
         gpc.position = "G"
         gpc.save
+        gpc.set_expected_points!
       end
       if pc.sf? || pc.pf? && !pcs_by_position.include?("F")
         gpc = pc.dup
         gpc.position = "F"
         gpc.save
+        gpc.set_expected_points!
       end
       if !pcs_by_position.include?("U")
         gpc = pc.dup
         gpc.position = "U"
         gpc.save
+        gpc.set_expected_points!
       end
 
     end

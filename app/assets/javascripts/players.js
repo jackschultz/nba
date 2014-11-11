@@ -92,49 +92,97 @@ $(document).ready(function() {
       async: true,
       dataType: "json",
       success: function (data) {
-        $("#lineup-salary").text(data.salary);
-        $("#lineup-expected-points").text(data.expected_points);
+        best = data[0];
+        secondary = data[1];
+        $("#lineup-salary").text(best.salary);
+        $("#lineup-expected-points").text(best.expected_points);
+        $("#lineup-actual-points-dk").text(best.actual_points_dk);
 
-        var p = data.players.point_guard;
+        var p = best.players.point_guard;
         $("#lineup-pg").find(".name").text(p.player.full_name);
         $("#lineup-pg").find(".salary").text(p.salary);
         $("#lineup-pg").find(".expected-points").text(p.expected_points);
 
-        p = data.players.shooting_guard;
+        p = best.players.shooting_guard;
         $("#lineup-sg").find(".name").text(p.player.full_name);
         $("#lineup-sg").find(".salary").text(p.salary);
         $("#lineup-sg").find(".expected-points").text(p.expected_points);
 
-        p = data.players.small_forward;
+        p = best.players.small_forward;
         $("#lineup-sf").find(".name").text(p.player.full_name);
         $("#lineup-sf").find(".salary").text(p.salary);
         $("#lineup-sf").find(".expected-points").text(p.expected_points);
 
-        p = data.players.power_forward;
+        p = best.players.power_forward;
         $("#lineup-pf").find(".name").text(p.player.full_name);
         $("#lineup-pf").find(".salary").text(p.salary);
         $("#lineup-pf").find(".expected-points").text(p.expected_points);
 
-        p = data.players.center;
+        p = best.players.center;
         $("#lineup-c").find(".name").text(p.player.full_name);
         $("#lineup-c").find(".salary").text(p.salary);
         $("#lineup-c").find(".expected-points").text(p.expected_points);
 
-        p = data.players.guard;
+        p = best.players.guard;
         $("#lineup-g").find(".name").text(p.player.full_name);
         $("#lineup-g").find(".salary").text(p.salary);
         $("#lineup-g").find(".expected-points").text(p.expected_points);
 
-        p = data.players.forward;
+        p = best.players.forward;
         $("#lineup-f").find(".name").text(p.player.full_name);
         $("#lineup-f").find(".salary").text(p.salary);
         $("#lineup-f").find(".expected-points").text(p.expected_points);
 
-        p = data.players.utility;
+        p = best.players.utility;
         $("#lineup-u").find(".name").text(p.player.full_name);
         $("#lineup-u").find(".salary").text(p.salary);
         $("#lineup-u").find(".expected-points").text(p.expected_points);
+
+        $("#lineup-salary2").text(secondary.salary);
+        $("#lineup-expected-points2").text(secondary.expected_points);
+        $("#lineup-actual-points-dk2").text(secondary.actual_points_dk);
+
+        p = secondary.players.point_guard;
+        $("#lineup-pg2").find(".name").text(p.player.full_name);
+        $("#lineup-pg2").find(".salary").text(p.salary);
+        $("#lineup-pg2").find(".expected-points").text(p.expected_points);
+
+        p = secondary.players.shooting_guard;
+        $("#lineup-sg2").find(".name").text(p.player.full_name);
+        $("#lineup-sg2").find(".salary").text(p.salary);
+        $("#lineup-sg2").find(".expected-points").text(p.expected_points);
+
+        p = secondary.players.small_forward;
+        $("#lineup-sf2").find(".name").text(p.player.full_name);
+        $("#lineup-sf2").find(".salary").text(p.salary);
+        $("#lineup-sf2").find(".expected-points").text(p.expected_points);
+
+        p = secondary.players.power_forward;
+        $("#lineup-pf2").find(".name").text(p.player.full_name);
+        $("#lineup-pf2").find(".salary").text(p.salary);
+        $("#lineup-pf2").find(".expected-points").text(p.expected_points);
+
+        p = secondary.players.center;
+        $("#lineup-c2").find(".name").text(p.player.full_name);
+        $("#lineup-c2").find(".salary").text(p.salary);
+        $("#lineup-c2").find(".expected-points").text(p.expected_points);
+
+        p = secondary.players.guard;
+        $("#lineup-g2").find(".name").text(p.player.full_name);
+        $("#lineup-g2").find(".salary").text(p.salary);
+        $("#lineup-g2").find(".expected-points").text(p.expected_points);
+
+        p = secondary.players.forward;
+        $("#lineup-f2").find(".name").text(p.player.full_name);
+        $("#lineup-f2").find(".salary").text(p.salary);
+        $("#lineup-f2").find(".expected-points").text(p.expected_points);
+
+        p = secondary.players.utility;
+        $("#lineup-u2").find(".name").text(p.player.full_name);
+        $("#lineup-u2").find(".salary").text(p.salary);
+        $("#lineup-u2").find(".expected-points").text(p.expected_points);
       }
+
     });
 
 

@@ -36,6 +36,7 @@ class StatLine < ActiveRecord::Base
   belongs_to :team
   belongs_to :player
 
+  scope :from_games, lambda{ |game_ids| where(game_id: game_ids) }
   scope :played, -> { where.not(:pts => nil) }
 
   def score_fan_duel

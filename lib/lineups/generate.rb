@@ -6,18 +6,18 @@ module Lineups
       generate_lineups(pcs)
     end
 
-    def self.generate_lineups(pcs)
+    def self.generate_lineups(pcs, depth = 0)
 
       lineup = generate_lineup(pcs)
 
       final_lineups = []
       duplicates = lineup.duplicates
       duplicates.each do |dup|
-        pcs_array = pcs.to_a
+        pcs_array = pcs.to_a.clone
         duplicates.each do |other_dup|
           pcs_array.delete(dup) if dup.id != other_dup.id
         end
-        final_lineups << generate_lineup(pcs_array)
+        final_lineups << generate_lineups(pcs_array, 1)
       end.empty? and begin
         final_lineups << lineup
       end
@@ -27,7 +27,23 @@ module Lineups
           valid_lineups << fl
         end
       end
-      return valid_lineups.sort_by{|l| l.expected_points}.last
+
+      best_lineup = valid_lineups.sort_by{|l| l.expected_points}.last
+      if depth == 0
+        pcs_array = pcs.to_a.clone
+        best_lineup.lineup.each do |player_cost|
+          player_costs = pcs.where(player_id: player_cost.player.id)
+          player_costs.each do |pc|
+            pcs_array.delete(pc)
+          end
+        end
+        secondary_lineup = generate_lineups(pcs_array, 1)
+        lineups = [best_lineup, secondary_lineup]
+        return lineups
+      else
+        return best_lineup
+      end
+
     end
 
     def self.filter_player_list(lineup, players)
