@@ -23,6 +23,7 @@ module Fetching
       params['StartPeriod'] = 0
       params['EndPeriod'] = 0
       params['RangeType'] = 0
+
       resp = fetch_from_nba(url, params)
       if resp
         result = JSON.parse(resp)['resultSets']
@@ -80,9 +81,9 @@ module Fetching
       stat_line.dreb = row[19]
       stat_line.reb = row[20]
       stat_line.ast = row[21]
-      stat_line.to = row[22]
-      stat_line.stl = row[23]
-      stat_line.blk = row[24]
+      stat_line.stl = row[22]
+      stat_line.blk = row[23]
+      stat_line.to = row[24]
       stat_line.pf = row[25]
       stat_line.pts = row[26]
       stat_line.plus_minus = row[27]

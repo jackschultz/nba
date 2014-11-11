@@ -52,9 +52,9 @@ module Fetching
             game.away_team_id = away_team.id
             game.date = game_date
             game.save
-              if fetch_stat_lines
-                Fetching::StatLines.process_stat_lines(game.id)
-              end
+            if fetch_stat_lines
+              Fetching::StatLines.process_stat_lines(game.id)
+            end
           end
         end
       else
