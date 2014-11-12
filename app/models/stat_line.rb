@@ -36,6 +36,8 @@ class StatLine < ActiveRecord::Base
   belongs_to :team
   belongs_to :player
 
+  default_scope { joins(:game).order('games.date DESC') }
+
   scope :from_games, lambda{ |game_ids| where(game_id: game_ids) }
   scope :played, -> { where.not(:pts => nil) }
 
