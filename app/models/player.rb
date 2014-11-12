@@ -19,6 +19,10 @@ class Player < ActiveRecord::Base
   has_many :player_costs
   has_many :stat_lines
 
+  def prev_stat_lines(date = Date.today, lookback = nil)
+    lookback ||= self.stat_lines.count
+    self.stat_lines
+  end
 
   def full_name
     "#{self.first_name} #{self.last_name}"

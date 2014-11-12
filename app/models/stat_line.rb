@@ -39,7 +39,8 @@ class StatLine < ActiveRecord::Base
   default_scope { joins(:game).order('games.date DESC') }
 
   scope :from_games, lambda{ |game_ids| where(game_id: game_ids) }
-  scope :played, -> { where.not(:pts => nil) }
+  scope :played, -> { where.not(:minutes => nil) }
+  scope :before_date, -> (date) { joins(:game).where('games.date < ?', date) }
 
   def score_fan_duel
     if self.pts.nil?
