@@ -21,7 +21,7 @@ class Player < ActiveRecord::Base
 
   def prev_stat_lines(date = Date.today, lookback = nil)
     lookback ||= self.stat_lines.count
-    self.stat_lines
+    self.stat_lines.before_date(date).take(lookback)
   end
 
   def full_name
