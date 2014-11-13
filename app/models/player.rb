@@ -24,6 +24,20 @@ class Player < ActiveRecord::Base
     self.stat_lines.before_date(date).take(lookback)
   end
 
+  def median_points(date, lookback)
+    stat_lines = self.prev_stat_lines(date, lookback)
+    len = stat_lines.length
+    if stat_lines.length == 0
+      return 0
+    elsif stat_lines.length == 1
+      return stat_lines.first.score_draft_kings
+    elsif stat_lines.length == 2
+      return (stat_lines.first.score_draft_kings + stat_lines.first.score_draft_kings)/2.0
+    else
+      stat_lines[(len-1) / 2].score_draft_kings + stat_lines[len/2].score_draft_kings / 2.0
+    end
+  end
+
   def full_name
     "#{self.first_name} #{self.last_name}"
   end

@@ -33,9 +33,9 @@ class PlayerCost < ActiveRecord::Base
 
   attr_accessor :weight_slope
 
-  def set_expected_points!(date = Date.today)
+  def set_expected_points!(date = Date.today, lookback = nil)
     beginning_of_season = Date.new(2014, 10, 27)
-    stat_lines = StatLine.played.after_date(beginning_of_season).before_date(date).where(player_id: self.player_id)
+    stat_lines = self.player.stat_lines.after_date(beginning_of_season).before_date(date).take(lookback)
     if stat_lines.length == 0
       self[:expected_points] = 0
     elsif stat_lines.length == 1
