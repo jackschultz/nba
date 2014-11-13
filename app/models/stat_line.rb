@@ -55,11 +55,11 @@ class StatLine < ActiveRecord::Base
   def score_draft_kings
     if self[:score_draft_kings].nil?
       if self.pts.nil?
-        0
+        self[:score_draft_kings] = 0
       else
-        self[:actual_points_dk] = (self.pts + (self.fg3m * 0.5) + (self.reb * 1.25) + (self.ast * 1.5) + (self.blk * 2) + (self.stl * 2) + (self.to * -0.5) + (double_double * 1.5) + (triple_double * 1.5)).round(2)
+        self[:score_draft_kings] = (self.pts + (self.fg3m * 0.5) + (self.reb * 1.25) + (self.ast * 1.5) + (self.blk * 2) + (self.stl * 2) + (self.to * -0.5) + (double_double * 1.5) + (triple_double * 1.5)).round(2)
       end
-        self.save
+      self.save
     end
     self[:score_draft_kings]
   end
