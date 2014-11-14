@@ -1,176 +1,179 @@
-<div id="date-info" data-year="<%= @date.year %>" data-month="<%= @date.month %>" data-day="<%= @date.day %>"></div>
+<div ng-controller="GameDayCtrl">
+  <div id="date-info" data-year="<%= @date.year %>" data-month="<%= @date.month %>" data-day="<%= @date.day %>"></div>
 
-<h1><%= @date %></h1>
+  <h1><%= @date %></h1>
 
-<% @games.each do |game| %>
+  <% @games.each do |game| %>
+    <div class="row">
+      <div class="col-md-6">
+        <label><input type="checkbox" checked class="ginfo" data-gid="<%= game.id %>"></input><%="#{game.away_team.full_name} at #{game.home_team.full_name}"%><%= link_to "(link)", game %></label>
+      </div>
+    </div>
+  <% end %>
+
   <div class="row">
     <div class="col-md-6">
-      <label><input type="checkbox" checked class="ginfo" data-gid="<%= game.id %>"></input><%="#{game.away_team.full_name} at #{game.home_team.full_name}"%><%= link_to "(link)", game %></label>
-    </div>
-  </div>
-<% end %>
-
-<div class="row">
-  <div class="col-md-6">
-    <button class="btn btn-success" id="generate-lineup">Generate Lineup</button>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Pos</th>
-          <th>Name</th>
-          <th>Salary</th>
-          <th>Expected Points</th>
-        </tr>
-      </thead>
-        <tr id="lineup-pg">
-          <td class="position">PG</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-sg">
-          <td class="position">SG</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-sf">
-          <td class="position">SF</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-pf">
-          <td class="position">PF</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-c">
-          <td class="position">C</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-g">
-          <td class="position">G</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-f">
-          <td class="position">F</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-u">
-          <td class="position">U</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-      </tbody>
-    </table>
-    <div>
-      Total Salary: <span id="lineup-salary"></span>
-    </div>
-    <div>
-      Expected Points: <span id="lineup-expected-points"></span>
-    </div>
-    <div>
-      Actual Points: <span id="lineup-actual-points-dk"></span>
+      <button class="btn btn-success" id="generate-lineup">Generate Lineup</button>
     </div>
   </div>
 
-  <div class="col-md-6">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Pos</th>
-          <th>Name</th>
-          <th>Salary</th>
-          <th>Expected Points</th>
-        </tr>
-      </thead>
-        <tr id="lineup-pg2">
-          <td class="position">PG</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-sg2">
-          <td class="position">SG</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-sf2">
-          <td class="position">SF</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-pf2">
-          <td class="position">PF</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-c2">
-          <td class="position">C</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-g2">
-          <td class="position">G</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-f2">
-          <td class="position">F</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-        <tr id="lineup-u2">
-          <td class="position">U</td>
-          <td class="name"></td>
-          <td class="salary"></td>
-          <td class="expected-points"></td>
-        </tr>
-      </tbody>
-    </table>
-    <div>
-      Total Salary: <span id="lineup-salary2"></span>
+  <div class="row">
+    <div class="col-md-6">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Name</th>
+            <th>Salary</th>
+            <th>Expected Points</th>
+          </tr>
+        </thead>
+          <tr id="lineup-pg">
+            <td class="position">PG</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-sg">
+            <td class="position">SG</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-sf">
+            <td class="position">SF</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-pf">
+            <td class="position">PF</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-c">
+            <td class="position">C</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-g">
+            <td class="position">G</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-f">
+            <td class="position">F</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-u">
+            <td class="position">U</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div>
+        Total Salary: <span id="lineup-salary"></span>
+      </div>
+      <div>
+        Expected Points: <span id="lineup-expected-points"></span>
+      </div>
+      <div>
+        Actual Points: <span id="lineup-actual-points-dk"></span>
+      </div>
     </div>
-    <div>
-      Expected Points: <span id="lineup-expected-points2"></span>
+
+    <div class="col-md-6">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Name</th>
+            <th>Salary</th>
+            <th>Expected Points</th>
+          </tr>
+        </thead>
+          <tr id="lineup-pg2">
+            <td class="position">PG</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-sg2">
+            <td class="position">SG</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-sf2">
+            <td class="position">SF</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-pf2">
+            <td class="position">PF</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-c2">
+            <td class="position">C</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-g2">
+            <td class="position">G</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-f2">
+            <td class="position">F</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+          <tr id="lineup-u2">
+            <td class="position">U</td>
+            <td class="name"></td>
+            <td class="salary"></td>
+            <td class="expected-points"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div>
+        Total Salary: <span id="lineup-salary2"></span>
+      </div>
+      <div>
+        Expected Points: <span id="lineup-expected-points2"></span>
+      </div>
+      <div>
+        Actual Points: <span id="lineup-actual-points-dk2"></span>
+      </div>
     </div>
-    <div>
-      Actual Points: <span id="lineup-actual-points-dk2"></span>
+
+  </div>
+
+
+  <div class="row">
+    <div class="col-md-6">
+      <h4>In</h4>
+      <%= render partial: "player_costs/table", locals: {player_costs: @player_costs.where(healthy: true), healthy: true} %>
+    </div>
+    <div class="col-md-6">
+      <h4>Out</h4>
+      <%= render partial: "player_costs/table", locals: {player_costs: @player_costs.where(healthy: false), healthy: false} %>
     </div>
   </div>
 
-</div>
-
-
-<div class="row">
-  <div class="col-md-6">
-    <h4>In</h4>
-    <%= render partial: "player_costs/table", locals: {player_costs: @player_costs.where(healthy: true), healthy: true} %>
-  </div>
-  <div class="col-md-6">
-    <h4>Out</h4>
-    <%= render partial: "player_costs/table", locals: {player_costs: @player_costs.where(healthy: false), healthy: false} %>
-  </div>
 </div>
 
 

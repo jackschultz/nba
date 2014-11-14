@@ -190,3 +190,9 @@ $(document).ready(function() {
 
 });
 
+var nbaApp = angular.module('nbaApp', []);
+
+nbaApp.controller('GameDayCtl', function ($scope) {
+
+
+});
