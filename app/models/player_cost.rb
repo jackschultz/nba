@@ -21,34 +21,47 @@ class PlayerCost < ActiveRecord::Base
   belongs_to :player
   belongs_to :game
 
-  scope :point_guards , -> { where(:position => "pg") }
-  scope :shooting_guards , -> { where(:position => "sg") }
-  scope :small_forwards, -> { where(:position => "sf") }
-  scope :power_forwards, -> { where(:position => "pf") }
-  scope :centers, -> { where(:position => "c") }
-  scope :guards , -> { where("position = ? or position = ?", "pg", "sg") }
-  scope :forwards, -> { where("position = ? or position = ?", "pf", "sf") }
+  scope :point_guards , -> { where(:position => "PG") }
+  scope :shooting_guards , -> { where(:position => "SG") }
+  scope :small_forwards, -> { where(:position => "SF") }
+  scope :power_forwards, -> { where(:position => "PF") }
+  scope :centers, -> { where(:position => "C") }
+  scope :guards , -> { where("position = ? or position = ?", "PG", "SG") }
+  scope :forwards, -> { where("position = ? or position = ?", "PF", "SF") }
+  scope :primary, -> { where(position: ["PG", "SG", "SF", "PF", "C"]) }
 
   scope :from_games, lambda{ |game_ids| where(game_id: game_ids) }
 
   attr_accessor :weight_slope
 
-  def set_expected_points!(date=nil, lookback = nil)
+  def set_expected_points!(date=nil, nba_avgs, opponent_avgs)
     date ||= self.game.date
     lookback = 3
     beginning_of_season = Date.new(2014, 10, 27)
     stat_lines = self.player.stat_lines.after_date(beginning_of_season).before_date(date).take(lookback)
-    if stat_lines.length == 0
+    if stat_lines.length <= 2
       self[:expected_points] = 0
     elsif stat_lines.length == 1
       self[:expected_points] = stat_lines.first.score_draft_kings
     elsif stat_lines.length == 2
-      self[:expected_points] = (stat_lines.first.score_draft_kings + stat_lines.first.score_draft_kings)/2.0
+      self[:expected_points] = (stat_lines.first.score_draft_kings + stat_lines.last.score_draft_kings)/2.0
     else
-      length = stat_lines.length
+      len = stat_lines.length
       sum = stat_lines.map(&:score_draft_kings).sum
-      self[:expected_points] = sum / length
- #     self[:expected_points] = stat_lines[(stat_lines.length/2.0).round].score_draft_kings
+      self[:expected_points] = sum / len
+      sorted = stat_lines.map(&:score_draft_kings)
+      median = len % 2 == 1 ? sorted[len/2] : (sorted[len/2 - 1] + sorted[len/2]).to_f / 2
+      self[:expected_points] = median
+
+=begin
+      if self.primary?
+        average = (nba_avgs[self.position] + opponent_avgs[self.position]) / 2.0
+        difference = opponent_avgs[self.position] - nba_avgs[self.position]
+        scale_for_opponent = difference / average
+        self[:expected_points] += self[:expected_points] * scale_for_opponent
+      end
+=end
+
     end
     self.save
   end
@@ -101,7 +114,11 @@ class PlayerCost < ActiveRecord::Base
   end
 
   def points
-    self[:actual_points_dk] || self.expected_points
+    self.expected_points
+  end
+
+  def primary?
+    self.pg? || self.sg? || self.sf? || self.pf? || self.c?
   end
 
   def sg?

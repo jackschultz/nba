@@ -14,9 +14,7 @@ module Lineups
       duplicates = lineup.duplicates
       duplicates.each do |dup|
         pcs_array = pcs.to_a.clone
-        duplicates.each do |other_dup|
-          pcs_array.delete(dup) if dup.id != other_dup.id
-        end
+        pcs_array.delete(dup)# if dup.id != other_dup.id
         final_lineups << generate_lineups(pcs_array, 1)
       end.empty? and begin
         final_lineups << lineup
@@ -64,7 +62,7 @@ module Lineups
       test_player = players[0]
       players[1..-1].each_with_index do |player, index|
         if test_player.salary == player.salary
-          if test_player.points < player.points
+          if test_player.expected_points < player.expected_points
             test_player = player
           end
         elsif test_player.salary < player.salary
@@ -74,7 +72,7 @@ module Lineups
       end
       top_at_salary.push(test_player)
 
-      top_at_salary.sort_by!{|p| p.points}.reverse!
+      top_at_salary.sort_by!{|p| p.expected_points}.reverse!
 
       non_dominated = []
       #we need to make sure that we remove the dominated ones
@@ -89,7 +87,7 @@ module Lineups
       non_dominated.reverse!
       non_dominated[1..-1].each_with_index do |player, index|
         prev_player = players[index]
-        player.weight_slope = (player.points - prev_player.points) / (player.salary - prev_player.salary)
+        player.weight_slope = (player.expected_points - prev_player.expected_points) / (player.salary - prev_player.salary)
       end
       non_dominated
     end

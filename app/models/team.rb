@@ -27,4 +27,43 @@ class Team < ActiveRecord::Base
     "#{self.city} #{self.nickname}"
   end
 
+  def points_given_by_position(date=nil)
+    date ||= Date.today
+    pts_given = []
+
+    self.home_games.this_season.where("date < ?", date).each do |hg|
+      pts_given << hg.home_team_against_position
+    end
+    self.away_games.this_season.where("date < ?", date).each do |hg|
+      pts_given << hg.away_team_against_position
+    end
+
+    against = {}
+    len = pts_given.length
+    against['PG'] = pts_given.inject(0) {|sum, hash| sum + hash['PG']} / len
+    against['SG'] = pts_given.inject(0) {|sum, hash| sum + hash['SG']} / len
+    against['SF'] = pts_given.inject(0) {|sum, hash| sum + hash['SF']} / len
+    against['PF'] = pts_given.inject(0) {|sum, hash| sum + hash['PF']} / len
+    against['C'] = pts_given.inject(0) {|sum, hash| sum + hash['C']} / len
+    return against
+  end
+
+  def self.nba_average_pgbp(date=nil)
+    date ||= Date.today
+    pts_given = []
+
+    self.all.each do |t|
+      pts_given << t.points_given_by_position(date)
+    end
+
+    against = {}
+    len = pts_given.length
+    against['PG'] = pts_given.inject(0) {|sum, hash| sum + hash['PG']} / len
+    against['SG'] = pts_given.inject(0) {|sum, hash| sum + hash['SG']} / len
+    against['SF'] = pts_given.inject(0) {|sum, hash| sum + hash['SF']} / len
+    against['PF'] = pts_given.inject(0) {|sum, hash| sum + hash['PF']} / len
+    against['C'] = pts_given.inject(0) {|sum, hash| sum + hash['C']} / len
+    return against
+  end
+
 end
