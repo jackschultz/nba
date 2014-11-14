@@ -10,7 +10,7 @@ class GamesController < ApplicationController
   def date
     @games = Game.on_date(@date)#Game.where(date: @date..@date+1.day-1.hour)
     @player_costs = []
-    @player_costs = PlayerCost.from_games(@games.map(&:id))
+    @player_costs = PlayerCost.primary.from_games(@games.map(&:id))
     @player_costs.to_a.sort! { |a, b|  a.expected_points <=> b.expected_points }.reverse!
   end
 

@@ -13,7 +13,7 @@
 
   <div class="row">
     <div class="col-md-6">
-      <button class="btn btn-success" id="generate-lineup">Generate Lineup</button>
+      <button class="btn btn-success" ng-click="generateLineups()" id="generate-lineup">Generate Lineup</button>
     </div>
   </div>
 
@@ -26,66 +26,27 @@
             <th>Name</th>
             <th>Salary</th>
             <th>Expected Points</th>
+            <th>Actual Points</th>
           </tr>
         </thead>
-          <tr id="lineup-pg">
-            <td class="position">PG</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-sg">
-            <td class="position">SG</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-sf">
-            <td class="position">SF</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-pf">
-            <td class="position">PF</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-c">
-            <td class="position">C</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-g">
-            <td class="position">G</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-f">
-            <td class="position">F</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-u">
-            <td class="position">U</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
+        <tbody>
+          <tr ng-repeat="player in lineup1.players">
+            <td class="position">{{player.position}}</td>
+            <td class="name">{{player.player.full_name}}</td>
+            <td class="salary">{{player.salary}}</td>
+            <td class="expected-points">{{player.expected_points | number:2}}</td>
+            <td class="actual-points-dk">{{player.actual_points | number:2}}</td>
           </tr>
         </tbody>
       </table>
       <div>
-        Total Salary: <span id="lineup-salary"></span>
+        Total Salary: <span id="lineup-salary">{{lineup1.salary | number:2}}</span>
       </div>
       <div>
-        Expected Points: <span id="lineup-expected-points"></span>
+        Expected Points: <span id="lineup-expected-points">{{lineup1.expected_points | number:2}}</span>
       </div>
       <div>
-        Actual Points: <span id="lineup-actual-points-dk"></span>
+        Actual Points: <span id="lineup-actual-points-dk">{{lineup1.actual_points_dk | number:2}}</span>
       </div>
     </div>
 
@@ -97,66 +58,27 @@
             <th>Name</th>
             <th>Salary</th>
             <th>Expected Points</th>
+            <th>Actual Points</th>
           </tr>
         </thead>
-          <tr id="lineup-pg2">
-            <td class="position">PG</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-sg2">
-            <td class="position">SG</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-sf2">
-            <td class="position">SF</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-pf2">
-            <td class="position">PF</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-c2">
-            <td class="position">C</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-g2">
-            <td class="position">G</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-f2">
-            <td class="position">F</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
-          </tr>
-          <tr id="lineup-u2">
-            <td class="position">U</td>
-            <td class="name"></td>
-            <td class="salary"></td>
-            <td class="expected-points"></td>
+        <tbody>
+          <tr ng-repeat="player in lineup2.players">
+            <td class="position">{{player.position}}</td>
+            <td class="name">{{player.player.full_name}}</td>
+            <td class="salary">{{player.salary}}</td>
+            <td class="expected-points">{{player.expected_points | number:2}}</td>
+            <td class="actual-points-dk">{{player.actual_points | number:2}}</td>
           </tr>
         </tbody>
       </table>
       <div>
-        Total Salary: <span id="lineup-salary2"></span>
+        Total Salary: <span id="lineup-salary">{{lineup2.salary}}</span>
       </div>
       <div>
-        Expected Points: <span id="lineup-expected-points2"></span>
+        Expected Points: <span id="lineup-expected-points">{{lineup2.expected_points | number:2}}</span>
       </div>
       <div>
-        Actual Points: <span id="lineup-actual-points-dk2"></span>
+        Actual Points: <span id="lineup-actual-points-dk">{{lineup2.actual_points_dk | number:2}}</span>
       </div>
     </div>
 

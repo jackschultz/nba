@@ -49,17 +49,15 @@ class PlayerCost < ActiveRecord::Base
       len = stat_lines.length
       sum = stat_lines.map(&:score_draft_kings).sum
       self[:expected_points] = sum / len
-      sorted = stat_lines.map(&:score_draft_kings)
+      sorted = stat_lines.map(&:score_draft_kings).sort
       median = len % 2 == 1 ? sorted[len/2] : (sorted[len/2 - 1] + sorted[len/2]).to_f / 2
       self[:expected_points] = median
 
 =begin
-      if self.primary?
-        average = (nba_avgs[self.position] + opponent_avgs[self.position]) / 2.0
-        difference = opponent_avgs[self.position] - nba_avgs[self.position]
-        scale_for_opponent = difference / average
-        self[:expected_points] += self[:expected_points] * scale_for_opponent
-      end
+      average = (nba_avgs[self.position] + opponent_avgs[self.position]) / 2.0
+      difference = opponent_avgs[self.position] - nba_avgs[self.position]
+      scale_for_opponent = difference / average
+      self[:expected_points] += self[:expected_points] * scale_for_opponent
 =end
 
     end
@@ -162,6 +160,7 @@ class PlayerCost < ActiveRecord::Base
     data[:position] = self.position
     data[:salary] = self.salary
     data[:expected_points] = self.expected_points
+    data[:actual_points] = self.actual_points_dk
     data[:healthy] = self.healthy
     data[:player] = self.player.to_json
     data

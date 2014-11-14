@@ -63,6 +63,7 @@ module Lineups
 
     def to_json
       data = {}
+=begin
       data[:players] = {}
       data[:players][:point_guard] = self.point_guard.to_json
       data[:players][:shooting_guard] = self.shooting_guard.to_json
@@ -72,6 +73,11 @@ module Lineups
       data[:players][:guard] = self.guard.to_json
       data[:players][:forward] = self.forward.to_json
       data[:players][:utility] = self.utility.to_json
+=end
+      data[:players] = []
+      self.lineup.each do |p|
+        data[:players] << p.to_json
+      end
       data[:expected_points] = self.expected_points
       data[:actual_points_dk] = self.actual_points_dk
       data[:salary] = self.current_cost

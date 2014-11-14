@@ -26,7 +26,7 @@
     </tr>
   </thead>
   <tbody>
-    <% stat_lines.sort_by{|sl| sl.score_draft_kings}.reverse.each do |stat_line| %>
+    <% stat_lines.each do |stat_line| %>
       <tr>
         <td><%= link_to stat_line.player.full_name, stat_line.player %></td>
         <td><%= stat_line.minutes %></td>

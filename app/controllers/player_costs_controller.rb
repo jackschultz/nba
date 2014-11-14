@@ -2,8 +2,11 @@ class PlayerCostsController < ApplicationController
   before_action :set_player_cost, only: [:update]
 
   def update
-    @player_cost.healthy = params[:healthy]
-    @player_cost.save
+    pcs = PlayerCost.where(player_id: @player_cost.player_id, game_id: @player_cost.game_id, site_id: @player_cost.site_id)
+    pcs.each do |pc|
+      pc.healthy = params[:healthy]
+      pc.save
+    end
     render json: {success: true}
   end
 

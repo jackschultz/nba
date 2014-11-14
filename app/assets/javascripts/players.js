@@ -72,7 +72,7 @@ $(document).ready(function() {
     });
   });
 
-
+/*
   $("#generate-lineup").click(function() {
 
     var game_ids = [];
@@ -187,12 +187,35 @@ $(document).ready(function() {
 
 
   });
+*/
 
 });
+  var nbaApp = angular.module('nbaApp', []);
 
-var nbaApp = angular.module('nbaApp', []);
+  nbaApp.controller('GameDayCtrl', function ($scope, $http) {
 
-nbaApp.controller('GameDayCtl', function ($scope) {
+    $scope.generateLineups = function () {
 
+      $scope.lineup1 = null;
+      $scope.lineup2 = null;
 
-});
+      var game_ids = [];
+      $('.ginfo:checked').each(function() {
+        game_ids.push($(this).data('gid'));
+      });
+
+      var data = {};
+      data.year = $("#date-info").data('year');
+      data.month = $("#date-info").data('month');
+      data.day = $("#date-info").data('day');
+      data.games = game_ids;
+
+      $http.get("/lineups?" + $.param(data)).
+        success(function(data, status, headers, config) {
+          $scope.lineup1 = data[0];
+          $scope.lineup2 = data[1];
+        });
+
+    };
+
+  });
