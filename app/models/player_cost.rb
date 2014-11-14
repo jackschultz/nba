@@ -33,7 +33,9 @@ class PlayerCost < ActiveRecord::Base
 
   attr_accessor :weight_slope
 
-  def set_expected_points!(date = Date.today, lookback = nil)
+  def set_expected_points!(date=nil, lookback = nil)
+    date ||= self.game.date
+    lookback = 3
     beginning_of_season = Date.new(2014, 10, 27)
     stat_lines = self.player.stat_lines.after_date(beginning_of_season).before_date(date).take(lookback)
     if stat_lines.length == 0
@@ -43,10 +45,47 @@ class PlayerCost < ActiveRecord::Base
     elsif stat_lines.length == 2
       self[:expected_points] = (stat_lines.first.score_draft_kings + stat_lines.first.score_draft_kings)/2.0
     else
-      self[:expected_points] = stat_lines[(stat_lines.length/2.0).round].score_draft_kings
+      length = stat_lines.length
+      sum = stat_lines.map(&:score_draft_kings).sum
+      self[:expected_points] = sum / length
+ #     self[:expected_points] = stat_lines[(stat_lines.length/2.0).round].score_draft_kings
     end
     self.save
   end
+
+=begin
+  def set_expected_points!
+    date = self.game.date
+    beginning_of_season = Date.new(2014, 10, 27)
+    stat_lines = self.player.stat_lines.after_date(beginning_of_season).before_date(date)
+    if stat_lines.length == 0
+      self[:expected_points] = 0
+    elsif stat_lines.length == 1
+      self[:expected_points] = stat_lines.first.score_draft_kings
+    elsif stat_lines.length == 2
+      self[:expected_points] = (stat_lines.first.score_draft_kings + stat_lines.last.score_draft_kings)/2.0
+    else
+      self[:expected_points] = stat_lines[(stat_lines.length/2.0).round].score_draft_kings#stat_lines.map(&:score_draft_kings).sum / stat_lines.length#
+    end
+    self.save
+  end
+
+  def set_expected_points!(lookback)
+    date = self.game.date
+    beginning_of_season = Date.new(2014, 10, 27)
+    stat_lines = [self.player.stat_lines.after_date(beginning_of_season).before_date(date).take(lookback).last].compact
+    if stat_lines.length == 0
+      self[:expected_points] = 0
+    elsif stat_lines.length == 1
+      self[:expected_points] = stat_lines.first.score_draft_kings
+    elsif stat_lines.length == 2
+      self[:expected_points] = (stat_lines.first.score_draft_kings + stat_lines.last.score_draft_kings)/2.0
+    else
+      self[:expected_points] = stat_lines.map(&:score_draft_kings).sum / stat_lines.length#stat_lines[(stat_lines.length/2.0).round].score_draft_kings
+    end
+    self.save
+  end
+=end
 
   def actual_points_dk
     if self[:actual_points_dk].nil?
