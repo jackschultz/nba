@@ -9,7 +9,11 @@ class LineupsController < ApplicationController
       @games = Game.find(gids)
     end
     @player_costs = []
-    @player_costs = PlayerCost.from_games(@games.map(&:id)).where(healthy: true)
+    if params[:starters] == "true"
+      @player_costs = PlayerCost.from_games(@games.map(&:id)).healthy.starting
+    else
+      @player_costs = PlayerCost.from_games(@games.map(&:id)).healthy
+    end
     @lineup = Lineups::Generate.generate_lineups(@player_costs)
     render json: [@lineup.first.to_json, @lineup.last.to_json]
   end

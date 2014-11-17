@@ -13,6 +13,7 @@
 #  expected_points  :float
 #  actual_points_dk :float
 #  healthy          :boolean          default(TRUE)
+#  starting         :boolean          default(FALSE)
 #
 
 require 'rails_helper'

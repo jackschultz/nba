@@ -56,6 +56,69 @@ module Fetching
       end
     end
 
+    def self.process_starters
+      game_ids = Game.today.map(&:id)
+      PlayerCost.from_games(game_ids).each do |pc|
+        pc.healthy = true
+        pc.starting = false
+        pc.save
+      end
+      url = "http://www.rotowire.com/basketball/nba_lineups.htm"
+      response = conn.get(url)
+      if response.success?
+        doc = Nokogiri::HTML(response.body)
+        doc.css('.dlineups-teamsnba').each do |game| #.first.next_element.css('.dlineups-vplayer').count
+          game.next_element.css('.dlineups-vplayer').each do |pnode|
+            full_name = pnode.children[3].children.text
+            player = find_player_by_full_name(full_name)
+            if player.nil?
+              next
+            end
+            pcs = player.player_costs.from_games(game_ids)
+            if pcs.empty?
+              Rails.logger.info "Cannot find player cost for player today with name: #{full_name}"
+              next
+            end
+            pcs.each do |pc|
+              pc.starting = true
+              pc.save
+            end
+          end
+        end
+        doc.css('.dlineups-nbainactiveblock').each do |block|
+          block.css('.dlineups-vplayer').each do |pnode|
+            full_name = pnode.children[3].children.text
+            player = find_player_by_full_name(full_name)
+            if player.nil?
+              next
+            end
+            pcs = player.player_costs.from_games(game_ids)
+            if pcs.empty?
+              Rails.logger.info "Cannot find player cost for player today with name: #{full_name}"
+              next
+            end
+            pcs.each do |pc|
+              pc.healthy = false
+              pc.save
+            end
+          end
+        end
+      end
+    end
+
+    def self.find_player_by_full_name(full_name)
+      fn_split = full_name.split(' ')
+      first_name = fn_split[0]
+      last_name = fn_split[1..-1].join(' ')
+      player = Player.find_by_first_name_and_last_name(first_name, last_name)
+      if player.nil?
+        Rails.logger.info "Cannot find player with name: #{full_name}"
+        poss_player = Player.where(last_name: last_name)
+        player = poss_player.first
+      end
+      player
+    end
+
   end
 end
 #'stats.nba.com/leagueTeamGeneral.html'

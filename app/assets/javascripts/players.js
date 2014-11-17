@@ -209,6 +209,7 @@ $(document).ready(function() {
       data.month = $("#date-info").data('month');
       data.day = $("#date-info").data('day');
       data.games = game_ids;
+      data.starters = $(".only-starters").prop('checked');
 
       $http.get("/lineups?" + $.param(data)).
         success(function(data, status, headers, config) {

@@ -16,7 +16,7 @@
     <% player_costs.sort_by{|pc| pc.expected_points}.reverse.each do |pc| %>
       <tr pcid="<%= pc.id %>" gid"<%= pc.game.id %>">
         <td><%= pc.position %></td>
-        <td><%= pc.player.full_name %></td>
+        <td><%= link_to pc.player.full_name, player_path(pc.player) %></td>
         <td class="pc-salary"><%= pc.salary %></td>
         <td class="pc-expected-points"><%= number_with_precision(pc.expected_points, precision: 2) %></td>
         <% if healthy %>

@@ -92,6 +92,7 @@ class Player < ActiveRecord::Base
   def to_json
     data = {}
     data[:full_name] = self.full_name
+    data[:id] = self.id
     data
   end
 

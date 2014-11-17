@@ -13,6 +13,7 @@
 #  expected_points  :float
 #  actual_points_dk :float
 #  healthy          :boolean          default(TRUE)
+#  starting         :boolean          default(FALSE)
 #
 
 class PlayerCost < ActiveRecord::Base
@@ -29,6 +30,8 @@ class PlayerCost < ActiveRecord::Base
   scope :guards , -> { where("position = ? or position = ?", "PG", "SG") }
   scope :forwards, -> { where("position = ? or position = ?", "PF", "SF") }
   scope :primary, -> { where(position: ["PG", "SG", "SF", "PF", "C"]) }
+  scope :starting, -> { where(starting: true) }
+  scope :healthy, -> { where(healthy: true) }
 
   scope :from_games, lambda{ |game_ids| where(game_id: game_ids) }
 
