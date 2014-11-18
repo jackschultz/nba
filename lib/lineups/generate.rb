@@ -10,12 +10,20 @@ module Lineups
 
       full_pcs = pcs.to_a
       if depth == 0
+        locked_positions = []
+        locked_actual = []
         locked = pcs.locked
         locked.each do |lock|
-          pcs = pcs.where('position != ?', lock.position)
+          lock_check = lock
+          while locked_positions.include?(lock_check.position)
+            lock_check = PlayerCost.where(game_id: lock.game_id, player_id: lock.player_id, position: lock_check.lower_position).first
+          end
+          locked_actual << lock_check
+          locked_positions << lock_check.position
+          pcs = pcs.where('position != ?', lock_check.position)
         end
         pcs_arr = pcs.to_a
-        locked.each do |lock|
+        locked_actual.each do |lock|
           pcs_arr << lock
         end
       else

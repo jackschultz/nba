@@ -155,6 +155,16 @@ class PlayerCost < ActiveRecord::Base
     self.position == "U"
   end
 
+  def lower_position
+    if self.pg? || self.sg?
+      "G"
+    elsif self.sf? || self.pf?
+      "F"
+    else
+      "U"
+    end
+  end
+
   def expected_points_per_dollar
     self.expected_points / self.salary
   end
