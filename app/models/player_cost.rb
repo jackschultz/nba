@@ -32,6 +32,7 @@ class PlayerCost < ActiveRecord::Base
   scope :primary, -> { where(position: ["PG", "SG", "SF", "PF", "C"]) }
   scope :starting, -> { where(starting: true) }
   scope :healthy, -> { where(healthy: true) }
+  scope :locked, -> { where(locked: true) }
 
   scope :from_games, lambda{ |game_ids| where(game_id: game_ids) }
 
@@ -165,6 +166,8 @@ class PlayerCost < ActiveRecord::Base
     data[:expected_points] = self.expected_points
     data[:actual_points] = self.actual_points_dk
     data[:healthy] = self.healthy
+    data[:locked] = self.locked
+    data[:starting] = self.starting
     data[:player] = self.player.to_json
     data
   end

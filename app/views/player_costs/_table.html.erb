@@ -5,6 +5,9 @@
       <th>Name</th>
       <th>Salary</th>
       <th>Expected Points</th>
+      <% if healthy %>
+        <th>Locked?</th>
+      <% end %>
       <th>Out</th>
     </tr>
   </thead>
@@ -19,6 +22,13 @@
         <td><%= link_to pc.player.full_name, player_path(pc.player) %></td>
         <td class="pc-salary"><%= pc.salary %></td>
         <td class="pc-expected-points"><%= number_with_precision(pc.expected_points, precision: 2) %></td>
+        <% if healthy %>
+          <% if pc.locked? %>
+            <td><button class="btn btn-success pc-unlock">Unlock</button></td>
+          <% else%>
+            <td><button class="btn btn-error pc-lock">Lock</button></td>
+          <% end %>
+        <% end %>
         <% if healthy %>
           <td><button class="btn btn-warning pc-out">Out</button></td>
         <% else%>

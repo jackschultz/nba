@@ -3,13 +3,43 @@
 
   <h1><%= @date %></h1>
 
-  <% @games.each do |game| %>
-    <div class="row">
-      <div class="col-md-6">
-        <label><input type="checkbox" checked class="ginfo" data-gid="<%= game.id %>"></input><%="#{game.away_team.full_name} at #{game.home_team.full_name}"%><%= link_to "(link)", game %></label>
-      </div>
+  <div class="row">
+    <div class="col-md-6">
+      <% @games.each do |game| %>
+        <div class="row">
+          <div class="col-md-12">
+            <label><input type="checkbox" checked class="ginfo" data-gid="<%= game.id %>"></input><%="#{game.away_team.full_name} at #{game.home_team.full_name}"%><%= link_to "(link)", game %></label>
+          </div>
+        </div>
+      <% end %>
     </div>
-  <% end %>
+    <div class="col-md-6">
+      <h4>Locked</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Name</th>
+            <th>Salary</th>
+            <th>Expected Points</th>
+            <th>Locked?</th>
+            <th>Out</th>
+          </tr>
+        </thead>
+        <tbody class="pcs-healthy">
+            <tr ng-repeat="player in players | filter:{locked:'true'} | orderBy:'-expected_points'">
+              <td>{{player.position}}</td>
+              <td><a href="/players/{{player.player.id}}">{{player.player.first_name}} {{player.player.last_name}}</a></td>
+              <td>{{player.salary}}</td>
+              <td>{{player.expected_points | number:2}}</td>
+              <td ng-show="player.locked"><button ng-click="playerUnlock(player)" class="btn btn-success pc-unlock">Unlock</button></td>
+              <td ng-hide="player.locked"><button ng-click="playerLock(player)" class="btn btn-error pc-lock">Lock</button></td>
+              <td><button ng-click="playerOut(player)" class="btn btn-warning pc-out">Out</button></td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <div class="row">
     <div class="col-md-6">
@@ -94,14 +124,54 @@
   <div class="row">
     <div class="col-md-6">
       <h4>In</h4>
-      <%= render partial: "player_costs/table", locals: {player_costs: @player_costs.where(healthy: true), healthy: true} %>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Name</th>
+            <th>Salary</th>
+            <th>Expected Points</th>
+            <th>Locked?</th>
+            <th>Out</th>
+          </tr>
+        </thead>
+        <tbody class="pcs-healthy">
+            <tr ng-repeat="player in players | filter:{healthy:'true'} | orderBy:'-expected_points'">
+              <td>{{player.position}}</td>
+              <td><a href="/players/{{player.player.id}}">{{player.player.first_name}} {{player.player.last_name}}</a></td>
+              <td>{{player.salary}}</td>
+              <td>{{player.expected_points | number:2}}</td>
+              <td ng-show="player.locked"><button ng-click="playerUnlock(player)" class="btn btn-success pc-unlock">Unlock</button></td>
+              <td ng-hide="player.locked"><button ng-click="playerLock(player)" class="btn btn-error pc-lock">Lock</button></td>
+              <td><button ng-click="playerOut(player)" class="btn btn-warning pc-out">Out</button></td>
+            </tr>
+        </tbody>
+      </table>
     </div>
     <div class="col-md-6">
       <h4>Out</h4>
-      <%= render partial: "player_costs/table", locals: {player_costs: @player_costs.where(healthy: false), healthy: false} %>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Name</th>
+            <th>Salary</th>
+            <th>Expected Points</th>
+            <th>Out</th>
+          </tr>
+        </thead>
+        <tbody class="pcs-healthy">
+            <tr ng-repeat="player in players | filter:{healthy:'false'} | orderBy:'-expected_points'">
+              <td>{{player.position}}</td>
+              <td><a href="/players/{{player.player.id}}">{{player.player.first_name}} {{player.player.last_name}}</a></td>
+              <td>{{player.salary}}</td>
+              <td>{{player.expected_points | number:2}}</td>
+              <td><button ng-click="playerIn(player)" class="btn btn-warning pc-out">In</button></td>
+            </tr>
+        </tbody>
+      </table>
     </div>
   </div>
-
 </div>
 
 

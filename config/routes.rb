@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
   resources :lineups, only: [:index]
 
-  resources :player_costs, only: [:update]
+  resources :player_costs, only: [:update, :index]
 
   resources :stats, only: [:index]
 

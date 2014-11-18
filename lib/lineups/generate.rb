@@ -8,27 +8,41 @@ module Lineups
 
     def self.generate_lineups(pcs, depth = 0)
 
-      lineup = generate_lineup(pcs)
+      full_pcs = pcs.to_a
+      if depth == 0
+        locked = pcs.locked
+        locked.each do |lock|
+          pcs = pcs.where('position != ?', lock.position)
+        end
+        pcs_arr = pcs.to_a
+        locked.each do |lock|
+          pcs_arr << lock
+        end
+      else
+        pcs_arr = pcs.to_a
+      end
+
+      lineup = generate_lineup(pcs_arr)
 
       final_lineups = []
       duplicates = lineup.duplicates
       duplicates.each do |dup|
-        pcs_array = pcs.to_a.clone
+        pcs_array = pcs_arr.clone
         pcs_array.delete(dup)# if dup.id != other_dup.id
         final_lineups << generate_lineups(pcs_array, 1)
       end.empty? and begin
         final_lineups << lineup
       end
       valid_lineups = []
-      final_lineups.each do |fl|
+      final_lineups.compact.each do |fl|
         if fl.valid_players?
           valid_lineups << fl
         end
       end
 
       best_lineup = valid_lineups.sort_by{|l| l.expected_points}.last
-      if depth == 0
-        pcs_array = pcs.to_a.clone
+      if depth == 0 && !best_lineup.nil?
+        pcs_array = full_pcs.clone
         best_lineup.lineup.each do |player_cost|
           player_costs = pcs.where(player_id: player_cost.player.id)
           player_costs.each do |pc|
@@ -54,8 +68,10 @@ module Lineups
       players.select{|p| p.salary < remaining_cost}
     end
 
-    def self.filter_and_slope(players)
-
+    def self.filter_dominators(players)
+      if players.length <= 1
+        return players
+      end
       top_at_salary = []
       #first thing is to get only the most expected points per salary
       players.sort_by!{|p| p.salary}.reverse
@@ -92,6 +108,14 @@ module Lineups
       non_dominated
     end
 
+    def self.slope_between_current(current, rest)
+      rest.each_with_index do |player, index|
+        player.weight_slope = (player.expected_points - current.expected_points) / (player.salary - current.salary)
+      end
+      rest.sort_by(&:weight_slope).reverse!
+      return rest
+    end
+
     def self.generate_lineup(pcs)
       ### Returns an array of possible lineups
       point_guards = pcs.map{|pc| pc.pg? && pc.points != 0 ? pc : nil}.compact
@@ -112,14 +136,14 @@ module Lineups
       forwards.sort_by!{|p| p.points}.reverse!
       utilities.sort_by!{|p| p.points}.reverse!
 
-      pgs = filter_and_slope(point_guards)
-      sgs = filter_and_slope(shooting_guards)
-      pfs = filter_and_slope(power_forwards)
-      sfs = filter_and_slope(small_forwards)
-      cs = filter_and_slope(centers)
-      gs = filter_and_slope(guards)
-      fs = filter_and_slope(forwards)
-      us = filter_and_slope(utilities)
+      pgs = filter_dominators(point_guards)
+      sgs = filter_dominators(shooting_guards)
+      pfs = filter_dominators(power_forwards)
+      sfs = filter_dominators(small_forwards)
+      cs = filter_dominators(centers)
+      gs = filter_dominators(guards)
+      fs = filter_dominators(forwards)
+      us = filter_dominators(utilities)
 
       test_lineup = DraftKingsLineup.new(total_salary: 50000)
       test_lineup.point_guard = pgs.shift
@@ -131,59 +155,91 @@ module Lineups
       test_lineup.forward = fs.shift
       test_lineup.utility = us.shift
 
+      pgs = slope_between_current(test_lineup.point_guard, pgs)
+      sgs = slope_between_current(test_lineup.shooting_guard, sgs)
+      sfs = slope_between_current(test_lineup.small_forward, sfs)
+      pfs = slope_between_current(test_lineup.power_forward, pfs)
+      cs = slope_between_current(test_lineup.center, cs)
+      gs = slope_between_current(test_lineup.guard, gs)
+      fs = slope_between_current(test_lineup.forward, fs)
+      us = slope_between_current(test_lineup.utility, us)
+
       remaining_players = pgs + sgs + pfs + sfs + cs + gs + fs + us
       remaining_players.sort_by!{|p| p.weight_slope}
 
-      remaining_players.each do |player|
+      while remaining_players.length > 0
+
+        player = remaining_players.shift
+
         if player.pg?
           prev = test_lineup.point_guard
           test_lineup.point_guard = player
-          if !test_lineup.valid_cost? || player.expected_points < prev.expected_points
+          if !test_lineup.valid_cost?# || player.expected_points < prev.expected_points
             test_lineup.point_guard = prev
           end
+          pgs.delete(player)
+          pgs = slope_between_current(test_lineup.point_guard, pgs)
         elsif player.sg?
           prev = test_lineup.shooting_guard
           test_lineup.shooting_guard = player
-          if !test_lineup.valid_cost? || player.expected_points < prev.expected_points
+          if !test_lineup.valid_cost?# || player.expected_points < prev.expected_points
             test_lineup.shooting_guard = prev
           end
+          sgs.delete(player)
+          sgs = slope_between_current(test_lineup.shooting_guard, sgs)
         elsif player.sf?
           prev = test_lineup.small_forward
           test_lineup.small_forward = player
-          if !test_lineup.valid_cost? || player.expected_points < prev.expected_points
+          if !test_lineup.valid_cost?# || player.expected_points < prev.expected_points
             test_lineup.small_forward = prev
           end
+          sfs.delete(player)
+          sfs = slope_between_current(test_lineup.small_forward, sfs)
         elsif player.pf?
           prev = test_lineup.power_forward
           test_lineup.power_forward = player
-          if !test_lineup.valid_cost? || player.expected_points < prev.expected_points
+          if !test_lineup.valid_cost?# || player.expected_points < prev.expected_points
             test_lineup.power_forward = prev
           end
+          pfs.delete(player)
+          pfs = slope_between_current(test_lineup.power_forward, pfs)
         elsif player.c?
           prev = test_lineup.center
           test_lineup.center = player
-          if !test_lineup.valid_cost? || player.expected_points < prev.expected_points
+          if !test_lineup.valid_cost?# || player.expected_points < prev.expected_points
             test_lineup.center = prev
           end
+          cs.delete(player)
+          cs = slope_between_current(test_lineup.center, cs)
         elsif player.g?
           prev = test_lineup.guard
           test_lineup.guard = player
-          if !test_lineup.valid_cost? || player.expected_points < prev.expected_points
+          if !test_lineup.valid_cost?# || player.expected_points < prev.expected_points
             test_lineup.guard = prev
           end
+          gs.delete(player)
+          gs = slope_between_current(test_lineup.guard, gs)
         elsif player.f?
           prev = test_lineup.forward
           test_lineup.forward = player
-          if !test_lineup.valid_cost? || player.expected_points < prev.expected_points
+          if !test_lineup.valid_cost?# || player.expected_points < prev.expected_points
             test_lineup.forward = prev
           end
+          fs.delete(player)
+          fs = slope_between_current(test_lineup.forward, fs)
         elsif player.u?
           prev = test_lineup.utility
           test_lineup.utility = player
-          if !test_lineup.valid_cost? || player.expected_points < prev.expected_points
+          if !test_lineup.valid_cost?# || player.expected_points < prev.expected_points
             test_lineup.utility = prev
           end
+          us.delete(player)
+          us = slope_between_current(test_lineup.utility, us)
         end
+
+        remaining_players = pgs + sgs + pfs + sfs + cs + gs + fs + us
+        remaining_players.sort_by!{|p| p.weight_slope}
+
       end
 
       test_lineup
