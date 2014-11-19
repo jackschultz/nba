@@ -48,6 +48,11 @@ class Team < ActiveRecord::Base
     return against
   end
 
+  def games
+    all_games = self.home_games + self.away_games
+    all_games.sort_by!(&:date).reverse!
+  end
+
   def self.nba_average_pgbp(date=nil)
     date ||= Date.today
     pts_given = []

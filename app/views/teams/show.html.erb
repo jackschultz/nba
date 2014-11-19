@@ -1,12 +1,24 @@
 <h1><%= @team.full_name %></h1>
-
-<% @team.players.each do |player| %>
-  <div class="row">
-    <div class="col-md-6">
-      <%= link_to player.full_name, player_path(player) %>
-    </div>
+<div class="row">
+  <div class="col-md-6">
+    <% @team.games.each do |game| %>
+      <div class="row">
+        <div class="col-md-12">
+          <%= link_to "#{game.date.strftime("%F")} #{game.display_title}", game_path(game) %>
+        </div>
+      </div>
+    <% end %>
   </div>
-<% end %>
+  <div class="col-md-6">
+    <% @team.players.each do |player| %>
+      <div class="row">
+        <div class="col-md-12">
+          <%= link_to player.full_name, player_path(player) %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
 
 
 <%= link_to 'Edit', edit_team_path(@team) %> |

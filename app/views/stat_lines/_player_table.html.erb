@@ -1,0 +1,43 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Name</th>
+      <th>Minutes</th>
+      <th>FG%</th>
+      <th>FG3%</th>
+      <th>FT%</th>
+      <th>REB</th>
+      <th>AST</th>
+      <th>TURN</th>
+      <th>STL</th>
+      <th>BLK</th>
+      <th>FOUL</th>
+      <th>PTS</th>
+      <th>+/-</th>
+      <th>DK</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% stat_lines.after_date(Date.new(2014,10,27)).each do |stat_line| %>
+      <tr>
+        <td><%= link_to stat_line.game.date.strftime("%F"), game_path(stat_line.game) %></td>
+        <td><%= stat_line.player.full_name %></td>
+        <td><%= stat_line.minutes %></td>
+        <td><%= stat_line.fg_pct %></td>
+        <td><%= stat_line.fg3_pct %></td>
+        <td><%= stat_line.ft_pct %></td>
+        <td><%= stat_line.reb %></td>
+        <td><%= stat_line.ast %></td>
+        <td><%= stat_line.to %></td>
+        <td><%= stat_line.stl %></td>
+        <td><%= stat_line.blk %></td>
+        <td><%= stat_line.pf %></td>
+        <td><%= stat_line.pts %></td>
+        <td><%= stat_line.plus_minus %></td>
+        <td><%= stat_line.score_draft_kings %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+

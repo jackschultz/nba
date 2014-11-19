@@ -56,4 +56,9 @@ class Game < ActiveRecord::Base
     end
     return stats
   end
+
+  def display_title
+    "#{away_team.full_name} at #{home_team.full_name}"
+  end
+
 end
