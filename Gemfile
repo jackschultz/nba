@@ -26,6 +26,7 @@ gem 'autoprefixer-rails'
 gem 'annotate'
 gem 'faraday_middleware'
 gem 'faraday'
+gem 'nokogiri', '~> 1.6.4.1'
 
 group :development do
   gem 'foreman'

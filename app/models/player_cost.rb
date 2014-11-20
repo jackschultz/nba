@@ -178,7 +178,6 @@ class PlayerCost < ActiveRecord::Base
     data[:expected_points] = self.expected_points
     data[:actual_points] = self.actual_points_dk
     data[:healthy] = self.healthy
-    data[:locked] = self.locked
     data[:starting] = self.starting
     data[:player] = self.player.to_json
     data
