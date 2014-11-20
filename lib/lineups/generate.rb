@@ -12,7 +12,12 @@ module Lineups
       if depth == 0
         locked_positions = []
         locked_actual = []
-        locked = pcs.locked
+        locked = []
+        pcs.each do |pc|
+          if pc.locked == true
+            locked << pc
+          end
+        end
         locked.each do |lock|
           lock_check = lock
           while locked_positions.include?(lock_check.position)

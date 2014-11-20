@@ -14,6 +14,14 @@ class LineupsController < ApplicationController
     else
       @player_costs = PlayerCost.from_games(@games.map(&:id)).healthy
     end
+    if !params[:locks].nil?
+      locked_ids = params[:locks].map{|lid| lid.to_i}
+      @player_costs.each do |pc|
+        if locked_ids.include?(pc.id) && pc.primary?
+          pc.locked = true
+        end
+      end
+    end
     @lineup = Lineups::Generate.generate_lineups(@player_costs)
     render json: [@lineup.first.to_json, @lineup.last.to_json]
   end

@@ -32,11 +32,11 @@ class PlayerCost < ActiveRecord::Base
   scope :primary, -> { where(position: ["PG", "SG", "SF", "PF", "C"]) }
   scope :starting, -> { where(starting: true) }
   scope :healthy, -> { where(healthy: true) }
-  scope :locked, -> { where(locked: true) }
 
   scope :from_games, lambda{ |game_ids| where(game_id: game_ids) }
 
   attr_accessor :weight_slope
+  attr_accessor :locked
 
   def set_expected_points!(date=nil, nba_avgs, opponent_avgs)
     date ||= self.game.date

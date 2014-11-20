@@ -14,35 +14,22 @@ $(document).ready(function() {
       $http.get("/player_costs?" + $.param(data)).
         success(function(data, status, headers, config) {
           $scope.players = data;
+          for (var i = 0; i < data.length; i++) {
+            $scope.players[i].locked = false;
+          }
         });
     };
 
     $scope.getPlayerCosts();
 
+    $scope.locked_players = [];
+
     $scope.playerLock = function(player) {
-      var data = {};
-      data.year = parseInt($("#date-info").data('year'), 10);
-      data.month = parseInt($("#date-info").data('month'), 10);
-      data.day = parseInt($("#date-info").data('day'), 10);
-      data.locked = true;
-      $http.put("/player_costs/" + player.id, data).
-        success(function(data, status, headers, config) {
-          $scope.players.splice($scope.players.indexOf(player),1);
-          $scope.players.push(data[0]);
-        });
+      player.locked = true;
     };
 
     $scope.playerUnlock = function(player) {
-      var data = {};
-      data.year = parseInt($("#date-info").data('year'), 10);
-      data.month = parseInt($("#date-info").data('month'), 10);
-      data.day = parseInt($("#date-info").data('day'), 10);
-      data.locked = false;
-      $http.put("/player_costs/" + player.id, data).
-        success(function(data, status, headers, config) {
-          $scope.players.splice($scope.players.indexOf(player),1);
-          $scope.players.push(data[0]);
-        });
+      player.locked = false;
     };
 
     $scope.playerOut = function(player) {
@@ -82,11 +69,19 @@ $(document).ready(function() {
         game_ids.push($(this).data('gid'));
       });
 
+      var locked_ids = [];
+      for(var i = 0; i < $scope.players.length; i++) {
+        if ($scope.players[i].locked === true) {
+          locked_ids.push($scope.players[i].id);
+        }
+      }
+
       var data = {};
       data.year = $("#date-info").data('year');
       data.month = $("#date-info").data('month');
       data.day = $("#date-info").data('day');
       data.games = game_ids;
+      data.locks = locked_ids;
       data.starters = $(".only-starters").prop('checked');
 
       $http.get("/lineups?" + $.param(data)).
