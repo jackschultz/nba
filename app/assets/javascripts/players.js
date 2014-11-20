@@ -4,7 +4,7 @@ $(document).ready(function() {
 
   var nbaApp = angular.module('nbaApp', []);
 
-  nbaApp.controller('GameDayCtrl', function ($scope, $http) {
+  nbaApp.controller('GameDayCtrl', ['$scope', '$http', function ($scope, $http) {
 
     $scope.getPlayerCosts = function() {
       var data = {};
@@ -91,4 +91,4 @@ $(document).ready(function() {
         });
     };
 
-  });
+  }]);
