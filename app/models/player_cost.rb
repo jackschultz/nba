@@ -38,7 +38,7 @@ class PlayerCost < ActiveRecord::Base
   attr_accessor :weight_slope
   attr_accessor :locked
 
-  def set_expected_points!(date=nil, nba_avgs, opponent_avgs)
+  def set_expected_points!(date=nil, nba_avgs, opponent_avgs, dk_average)
     date ||= self.game.date
     lookback = 3
     beginning_of_season = Date.new(2014, 10, 27)

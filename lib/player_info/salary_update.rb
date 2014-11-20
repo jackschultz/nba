@@ -137,7 +137,7 @@ team_avgs = {26=>{"PG"=>38.464285714285715, "SG"=>23.642857142857142, "SF"=>31.1
 
         other_team_id = game.home_team_id == sinfo.player.team.id ? game.away_team_id : game.away_team_id
 
-        sinfo.set_expected_points!(date, nba_avgs, team_avgs[other_team_id])
+#        sinfo.set_expected_points!(date, nba_avgs, team_avgs[other_team_id], row[-1])
         generate_other_player_costs(sinfo)
       end
     end
