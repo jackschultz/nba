@@ -335,6 +335,7 @@ DEPENDENCIES
   launchy
   leather!
   newrelic_rpm (>= 3.7.3)
+  nokogiri
   pg
   poltergeist
   pry-byebug
