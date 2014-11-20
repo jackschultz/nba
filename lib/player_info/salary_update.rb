@@ -6,6 +6,9 @@ module PlayerInfo
     def self.update_draft_kings(date=nil)
       date ||= Date.today
 
+      team_avgs = {}
+      nba_avgs = {}
+=begin
       nba_avgs = Team.nba_average_pgbp(date)
 
       team_avgs = {}
@@ -13,6 +16,7 @@ module PlayerInfo
         team_avgs[g.home_team_id] = g.home_team.points_given_by_position(date)
         team_avgs[g.away_team_id] = g.away_team.points_given_by_position(date)
       end
+=end
 
 =begin TODO dates for 11/13/14
       nba_avgs = {"PG"=>38.0182705026455, "SG"=>32.80001653439153, "SF"=>29.517923280423286, "PF"=>34.3322585978836, "C"=>31.78369708994709}

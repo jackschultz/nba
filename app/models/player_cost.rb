@@ -55,7 +55,9 @@ class PlayerCost < ActiveRecord::Base
       self[:expected_points] = sum / len
       sorted = stat_lines.map(&:score_draft_kings).sort
       median = len % 2 == 1 ? sorted[len/2] : (sorted[len/2 - 1] + sorted[len/2]).to_f / 2
-      self[:expected_points] = median
+      worst = sorted.first
+      self[:expected_points] = (median + worst) / 2.0
+#      self[:expected_points] = sorted.first
 
 =begin
       average = (nba_avgs[self.position] + opponent_avgs[self.position]) / 2.0
