@@ -58,10 +58,8 @@ module Fetching
 
     def self.record_actual_points(stat_line)
       player_costs = stat_line.game.player_costs.where(player_id: stat_line.player.id)
-      if !player_costs.nil?
-        player_costs.each do |pc|
-          pc.actual_points_dk = stat_line.score_draft_kings
-        end
+      player_costs.each do |pc|
+        pc.actual_points_dk = stat_line.score_draft_kings
       end
     end
 
