@@ -82,7 +82,6 @@ $(document).ready(function() {
       data.day = $("#date-info").data('day');
       data.games = game_ids;
       data.locks = locked_ids;
-      data.starters = $(".only-starters").prop('checked');
 
       $http.get("/lineups?" + $.param(data)).
         success(function(data, status, headers, config) {

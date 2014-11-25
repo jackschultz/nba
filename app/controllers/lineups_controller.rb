@@ -8,12 +8,7 @@ class LineupsController < ApplicationController
       gids = params[:games].map{|gid| gid.to_i}
       @games = Game.find(gids)
     end
-    @player_costs = []
-    if params[:starters] == "true"
-      @player_costs = PlayerCost.from_games(@games.map(&:id)).healthy.starting
-    else
-      @player_costs = PlayerCost.from_games(@games.map(&:id)).healthy
-    end
+    @player_costs = PlayerCost.from_games(@games.map(&:id)).healthy
     if !params[:locks].nil?
       locked_ids = params[:locks].map{|lid| lid.to_i}
       @player_costs.each do |pc|
