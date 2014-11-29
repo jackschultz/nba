@@ -19,7 +19,6 @@ class PlayerCostsController < ApplicationController
 
   def index
     @games = Game.on_date(@date)#Game.where(date: @date..@date+1.day-1.hour)
-    @player_costs = []
     @player_costs = PlayerCost.primary.from_games(@games.map(&:id))
     render json: @player_costs, include: :player
   end

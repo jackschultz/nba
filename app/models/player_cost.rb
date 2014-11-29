@@ -38,6 +38,8 @@ class PlayerCost < ActiveRecord::Base
   attr_accessor :weight_slope
   attr_accessor :locked
   attr_accessor :current_salary_difference
+  attr_accessor :expected_points_difference
+  attr_accessor :prev_lineup_cost
 
   def set_expected_points!(date=nil, nba_avgs, opponent_avgs, dk_average)
     date ||= self.game.date
