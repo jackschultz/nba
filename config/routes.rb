@@ -2,8 +2,9 @@ require 'sidekiq/web'
 
 Rails.application.routes.draw do
   devise_for :users
-  mount Leather::Engine => '/'
   mount Sidekiq::Web, at: '/sidekiq'
+
+  root 'homes#index'
 
   resources :teams, only: [:index, :show, :edit, :update]
   resources :players
