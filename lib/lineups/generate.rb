@@ -366,7 +366,7 @@ module Lineups
 
       end
 
-      best_lineup = best_at_salary[best_at_salary.keys[-2]]
+      best_lineup = best_at_salary[best_at_salary.keys[-1]]
       c = 50000
       l = (player.expected_points - old_player.expected_points) / (player.salary - old_player.salary)
       cap_P = best_lineup.expected_points
@@ -437,6 +437,8 @@ module Lineups
           possible_us << p
         end
       end
+
+      binding.pry
 
       lineups = []
       test_lineup = DraftKingsLineup.new(total_salary: 50000)
