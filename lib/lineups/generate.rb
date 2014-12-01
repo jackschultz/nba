@@ -438,8 +438,6 @@ module Lineups
         end
       end
 
-      binding.pry
-
       lineups = []
       test_lineup = DraftKingsLineup.new(total_salary: 50000)
       possible_pgs.each do |pg|
