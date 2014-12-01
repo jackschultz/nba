@@ -295,23 +295,23 @@ module Lineups
       forwards.sort_by!{|p| p.salary}.reverse!
       utilities.sort_by!{|p| p.salary}.reverse!
 
-      pgs = filter_dominators(point_guards)
-      sgs = filter_dominators(shooting_guards)
-      pfs = filter_dominators(power_forwards)
-      sfs = filter_dominators(small_forwards)
-      cs = filter_dominators(centers)
-      gs = filter_dominators(guards)
-      fs = filter_dominators(forwards)
-      us = filter_dominators(utilities)
+      pgs_dom = filter_dominators(point_guards)
+      sgs_dom = filter_dominators(shooting_guards)
+      pfs_dom = filter_dominators(power_forwards)
+      sfs_dom = filter_dominators(small_forwards)
+      cs_dom = filter_dominators(centers)
+      gs_dom = filter_dominators(guards)
+      fs_dom = filter_dominators(forwards)
+      us_dom = filter_dominators(utilities)
 
-      pgs_lp = filter_lp_dominators(pgs)
-      sgs_lp = filter_lp_dominators(sgs)
-      pfs_lp = filter_lp_dominators(pfs)
-      sfs_lp = filter_lp_dominators(sfs)
-      cs_lp = filter_lp_dominators(cs)
-      gs_lp = filter_lp_dominators(gs)
-      fs_lp = filter_lp_dominators(fs)
-      us_lp = filter_lp_dominators(us)
+      pgs_lp = filter_lp_dominators(pgs_dom)
+      sgs_lp = filter_lp_dominators(sgs_dom)
+      pfs_lp = filter_lp_dominators(pfs_dom)
+      sfs_lp = filter_lp_dominators(sfs_dom)
+      cs_lp = filter_lp_dominators(cs_dom)
+      gs_lp = filter_lp_dominators(gs_dom)
+      fs_lp = filter_lp_dominators(fs_dom)
+      us_lp = filter_lp_dominators(us_dom)
 
       pgs = slope_between_prev(pgs_lp)
       sgs = slope_between_prev(sgs_lp)
@@ -365,8 +365,125 @@ module Lineups
         end
 
       end
-      current_best_lineup = best_at_salary[best_at_salary.keys[-2]]
-      return current_best_lineup
+
+      best_lineup = best_at_salary[best_at_salary.keys[-2]]
+      c = 50000
+      l = (player.expected_points - old_player.expected_points) / (player.salary - old_player.salary)
+      cap_P = best_lineup.expected_points
+      cap_W = best_lineup.current_cost
+      z = cap_P + (c - cap_W)*l
+
+      best_p = best_lineup.point_guard
+      possible_pgs = []
+      pgs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_pgs << p
+        end
+      end
+      best_p = best_lineup.shooting_guard
+      possible_sgs = []
+      sgs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_sgs << p
+        end
+      end
+      best_p = best_lineup.small_forward
+      possible_sfs = []
+      sfs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_sfs << p
+        end
+      end
+      best_p = best_lineup.power_forward
+      possible_pfs = []
+      pfs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_pfs << p
+        end
+      end
+      best_p = best_lineup.center
+      possible_cs = []
+      cs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_cs << p
+        end
+      end
+      best_p = best_lineup.guard
+      possible_gs = []
+      gs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_gs << p
+        end
+      end
+      best_p = best_lineup.forward
+      possible_fs = []
+      fs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_fs << p
+        end
+      end
+      best_p = best_lineup.utility
+      possible_us = []
+      us_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_us << p
+        end
+      end
+
+      lineups = []
+      test_lineup = DraftKingsLineup.new(total_salary: 50000)
+      possible_pgs.each do |pg|
+        puts "PG"
+        #add point guard
+        test_lineup.point_guard = pg
+        possible_sgs.each do |sg|
+          puts "SG"
+          #add shooting guard, no way these go over the limit
+          test_lineup.shooting_guard = sg
+          possible_sfs.each do |sf|
+            puts "SF"
+            #add small forward, no way these go over the limit
+            test_lineup.small_forward = sf
+            possible_pfs.each do |pf|
+              puts "PF"
+              #add power forward, no way these go over the limit
+              test_lineup.power_forward = pf
+              possible_cs.each do |c|
+                puts "C"
+                test_lineup.center = c
+               # possible_guards = filter_player_list(test_lineup, gs)
+                possible_gs.each do |g|
+                  puts "G"
+                  test_lineup.guard = g
+                #  possible_forwards = filter_player_list(test_lineup, fs)
+                  possible_fs.each do |f|
+                    puts "F"
+                    test_lineup.forward = f
+                    possible_us.each do |u|
+                      puts "U"
+                   # u = us.sort_by{|p| p.expected_points}.first
+                      test_lineup.utility = u
+                      lineups << test_lineup.clone if test_lineup.valid?
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+
+      return lineups.sort! { |a,b| b.expected_points <=> a.expected_points }.first
+
+      return best_lineup
 
       #second part of the alg.
       test_cost = best_valid_cost
