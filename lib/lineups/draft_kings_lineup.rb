@@ -114,6 +114,49 @@ module Lineups
     end
 
     def add_player(new_player)
+      if new_player.pg?
+        if self.point_guard.nil?
+          self.point_guard = new_player
+        elsif self.guard.nil?
+          self.guard = new_player
+        elsif self.utility.nil?
+          self.utility = new_player
+        end
+      elsif new_player.sg?
+        if self.shooting_guard.nil?
+          self.shooting_guard = new_player
+        elsif self.guard.nil?
+          self.guard = new_player
+        elsif self.utility.nil?
+          self.utility = new_player
+        end
+      elsif new_player.sf?
+        if self.small_forward.nil?
+          self.small_forward = new_player
+        elsif self.forward.nil?
+          self.forward = new_player
+        elsif self.utility.nil?
+          self.utility = new_player
+        end
+      elsif new_player.pf?
+        if self.power_forward.nil?
+          self.power_forward = new_player
+        elsif self.forward.nil?
+          self.forward = new_player
+        elsif self.utility.nil?
+          self.utility = new_player
+        end
+      elsif new_player.c?
+        if self.center.nil?
+          self.center = new_player
+        elsif self.utility.nil?
+          self.utility = new_player
+        end
+      end
+    end
+
+=begin
+    def add_player(new_player)
       if player_in_lineup?(new_player)
         return nil
       else
@@ -146,7 +189,6 @@ module Lineups
       end
     end
 
-=begin
     def add_player(new_player)
       if new_player.pg?
         prev_player = self.point_guard
