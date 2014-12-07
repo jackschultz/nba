@@ -36,18 +36,7 @@ module Lineups
       else
         pcs_arr = pcs.to_a
       end
-=begin
-      point_guards = pcs.map{|pc| pc.pg? && pc.expected_points != 0 ? pc : nil}.compact
-      shooting_guards = pcs.map{|pc| pc.sg? && pc.expected_points != 0 ? pc : nil}.compact
-      power_forwards = pcs.map{|pc| pc.pf? && pc.expected_points != 0 ? pc : nil}.compact
-      small_forwards = pcs.map{|pc| pc.sf? && pc.expected_points != 0 ? pc : nil}.compact
-      centers = pcs.map{|pc| pc.c? && pc.expected_points != 0 ? pc : nil}.compact
-      guards = pcs.map{|pc| pc.g? && pc.expected_points != 0 ? pc : nil}.compact
-      forwards = pcs.map{|pc| pc.f? && pc.expected_points != 0 ? pc : nil}.compact
-      utilities = pcs.map{|pc| pc.u? && pc.expected_points != 0 ? pc : nil}.compact
 
-      players = [point_guards, shooting_guards, small_forwards, power_forwards, centers, guards, forwards, utilities]
-=end
       #lineup = generate_lineup_lm(pcs_arr)
       lineup = generate_lineup_r(pcs_arr)
 #      lineup = generate_lineup_dyn(pcs_arr)
