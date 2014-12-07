@@ -1,1 +1,1 @@
-install.packages("lpsolve", dependencies = TRUE)
+install.packages("lpsolve")
