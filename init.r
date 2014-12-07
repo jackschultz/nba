@@ -1,4 +1,4 @@
-my_packages = c("lpsolve")
+my_packages = c("lpSolve")
 
 install_if_missing = function(p) {
     if (p %in% rownames(installed.packages()) == FALSE) {
