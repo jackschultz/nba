@@ -48,7 +48,8 @@ module Lineups
 
       players = [point_guards, shooting_guards, small_forwards, power_forwards, centers, guards, forwards, utilities]
 =end
-      lineup = generate_lineup_lm(pcs_arr)
+      #lineup = generate_lineup_lm(pcs_arr)
+      lineup = generate_lineup_r(pcs_arr)
 #      lineup = generate_lineup_dyn(pcs_arr)
 #      lineup = generate_lineup_brute(pcs_arr)
 
@@ -216,6 +217,13 @@ module Lineups
       end
       rest.sort_by(&:salary).reverse!
       return rest
+    end
+
+    def self.generate_lineup_r(pcs)
+      R.eval <<-EOF
+
+      EOF
+
     end
 
     def self.generate_lineup_brute(pcs)
