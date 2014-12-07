@@ -27,6 +27,7 @@ gem 'annotate'
 gem 'faraday_middleware'
 gem 'faraday'
 gem 'nokogiri'
+gem 'rinruby'
 
 group :development do
   gem 'foreman'

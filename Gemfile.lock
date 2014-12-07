@@ -227,6 +227,7 @@ GEM
       redis (~> 3.0, >= 3.0.4)
     responders (1.1.1)
       railties (>= 3.2, < 4.2)
+    rinruby (2.0.3)
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
@@ -343,6 +344,7 @@ DEPENDENCIES
   rack-timeout
   rails (= 4.1.1)
   recipient_interceptor
+  rinruby
   rspec-rails (~> 3.0)
   sass-rails (~> 4.0.3)
   shoulda-matchers

@@ -1,6 +1,8 @@
 module Lineups
   module Generate
 
+    require "rinruby"
+
     def self.generate_lineups_ids(pcs_ids)
       pcs = PlayerCosts.find_all_by_id(pcs_ids)
       generate_lineups(pcs)
@@ -784,7 +786,6 @@ module Lineups
           possible_us << p
         end
       end
-
 
       lineups = []
       test_lineup = DraftKingsLineup.new(total_salary: 50000)
