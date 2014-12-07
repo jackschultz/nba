@@ -1,6 +1,11 @@
-$(document).ready(function() {
+  var optimize = function(player_hash) {
 
-});
+    var dominators = {};
+
+
+
+
+  };
 
   var nbaApp = angular.module('nbaApp', []);
 

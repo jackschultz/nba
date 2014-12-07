@@ -34,7 +34,18 @@ module Lineups
       else
         pcs_arr = pcs.to_a
       end
+=begin
+      point_guards = pcs.map{|pc| pc.pg? && pc.expected_points != 0 ? pc : nil}.compact
+      shooting_guards = pcs.map{|pc| pc.sg? && pc.expected_points != 0 ? pc : nil}.compact
+      power_forwards = pcs.map{|pc| pc.pf? && pc.expected_points != 0 ? pc : nil}.compact
+      small_forwards = pcs.map{|pc| pc.sf? && pc.expected_points != 0 ? pc : nil}.compact
+      centers = pcs.map{|pc| pc.c? && pc.expected_points != 0 ? pc : nil}.compact
+      guards = pcs.map{|pc| pc.g? && pc.expected_points != 0 ? pc : nil}.compact
+      forwards = pcs.map{|pc| pc.f? && pc.expected_points != 0 ? pc : nil}.compact
+      utilities = pcs.map{|pc| pc.u? && pc.expected_points != 0 ? pc : nil}.compact
 
+      players = [point_guards, shooting_guards, small_forwards, power_forwards, centers, guards, forwards, utilities]
+=end
       lineup = generate_lineup_lm(pcs_arr)
 #      lineup = generate_lineup_dyn(pcs_arr)
 #      lineup = generate_lineup_brute(pcs_arr)
@@ -274,7 +285,71 @@ module Lineups
 
     end
 
-    def self.generate_lineup_lm(pcs)
+
+    def self.generate_lineup_lm2(pcs)
+
+      current_best_lineup = DraftKingsLineup.new(total_salary: 50000)
+      #pcs is an array of arrays of each
+      remaining_players = []
+      pcs.each do |clas|
+        sorted_clas = clas.sort_by!{|p| p.salary}.reverse!
+        dominators_clas = filter_dominators(sorted_clas)
+        lp_dominators_clas = filter_lp_dominators(dominators_clas)
+        first_player = lp_dominators_clas.shift
+        while current_best_lineup.player_in_lineup?(first_player)
+          first_player = lp_dominators_clas.shift
+        end
+        current_best_lineup.add_player(first_player)
+        remaining_players += lp_dominators_clas
+      end
+      remaining_players.sort_by!{|p| p.weight_slope}.reverse!
+
+
+      best_at_salary = {}
+
+      best_valid_cost = current_best_lineup.current_cost
+      while remaining_players.length > 0
+
+        best_valid_cost = current_best_lineup.current_cost
+
+        player = remaining_players.shift
+        old_player = current_best_lineup.add_player(player)
+
+        best_at_salary[current_best_lineup.current_cost] = current_best_lineup.clone
+        if current_best_lineup.current_cost > 50000
+        #  new_player = current_best_lineup.add_player(old_player)
+          break
+        end
+
+      end
+
+      best_lineup = best_at_salary[best_at_salary.keys[-1]]
+      c = 50000
+      l = (player.expected_points - old_player.expected_points) / (player.salary - old_player.salary)
+      cap_P = best_lineup.expected_points
+      cap_W = best_lineup.current_cost
+      z = cap_P + (c - cap_W)*l
+
+      locked_player_ids = []
+      best_p = best_lineup.point_guard
+      possible_pgs = []
+      pgs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_pgs << p
+        end
+      end
+      if possible_pgs.length == 1
+        locked_player_ids << possible_pgs.first.player_id
+      end
+
+
+
+
+
+
+
+
 
       ### Returns an array of possible lineups
       point_guards = pcs.map{|pc| pc.pg? && pc.expected_points != 0 ? pc : nil}.compact
@@ -373,6 +448,7 @@ module Lineups
       cap_W = best_lineup.current_cost
       z = cap_P + (c - cap_W)*l
 
+      locked_player_ids = []
       best_p = best_lineup.point_guard
       possible_pgs = []
       pgs_dom.each do |p|
@@ -381,6 +457,10 @@ module Lineups
           possible_pgs << p
         end
       end
+      if possible_pgs.length == 1
+        locked_player_ids << possible_pgs.first.player_id
+      end
+
       best_p = best_lineup.shooting_guard
       possible_sgs = []
       sgs_dom.each do |p|
@@ -389,6 +469,10 @@ module Lineups
           possible_sgs << p
         end
       end
+      if possible_sgs.length == 1
+        locked_player_ids << possible_sgs.first.player_id
+      end
+
       best_p = best_lineup.small_forward
       possible_sfs = []
       sfs_dom.each do |p|
@@ -397,6 +481,10 @@ module Lineups
           possible_sfs << p
         end
       end
+      if possible_sfs.length == 1
+        locked_player_ids << possible_sfs.first.player_id
+      end
+
       best_p = best_lineup.power_forward
       possible_pfs = []
       pfs_dom.each do |p|
@@ -405,6 +493,10 @@ module Lineups
           possible_pfs << p
         end
       end
+      if possible_pfs.length == 1
+        locked_player_ids << possible_pfs.first.player_id
+      end
+
       best_p = best_lineup.center
       possible_cs = []
       cs_dom.each do |p|
@@ -413,30 +505,286 @@ module Lineups
           possible_cs << p
         end
       end
+      if possible_cs.length == 1
+        locked_player_ids << possible_cs.first.player_id
+      end
+
       best_p = best_lineup.guard
       possible_gs = []
       gs_dom.each do |p|
         u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
-        if u > z || best_p.player_id == p.player_id
+        if (u > z  && !locked_player_ids.include?(p.player_id)) || best_p.player_id == p.player_id
           possible_gs << p
         end
       end
+      if possible_gs.length == 1
+        locked_player_ids << possible_gs.first.player_id
+      end
+
       best_p = best_lineup.forward
       possible_fs = []
       fs_dom.each do |p|
         u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
-        if u > z || best_p.player_id == p.player_id
+        if (u > z  && !locked_player_ids.include?(p.player_id)) || best_p.player_id == p.player_id
           possible_fs << p
         end
       end
+      if possible_fs.length == 1
+        locked_player_ids << possible_fs.first.player_id
+      end
+
       best_p = best_lineup.utility
       possible_us = []
       us_dom.each do |p|
         u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
-        if u > z || best_p.player_id == p.player_id
+        if (u > z  && !locked_player_ids.include?(p.player_id)) || best_p.player_id == p.player_id
           possible_us << p
         end
       end
+
+      lineups = []
+      test_lineup = DraftKingsLineup.new(total_salary: 50000)
+      possible_pgs.each do |pg|
+        puts "PG"
+        #add point guard
+        test_lineup.point_guard = pg
+        possible_sgs.each do |sg|
+          puts "SG"
+          #add shooting guard, no way these go over the limit
+          test_lineup.shooting_guard = sg
+          possible_sfs.each do |sf|
+            puts "SF"
+            #add small forward, no way these go over the limit
+            test_lineup.small_forward = sf
+            possible_pfs.each do |pf|
+              puts "PF"
+              #add power forward, no way these go over the limit
+              test_lineup.power_forward = pf
+              possible_cs.each do |c|
+                puts "C"
+                test_lineup.center = c
+               # possible_guards = filter_player_list(test_lineup, gs)
+                possible_gs.each do |g|
+                  puts "G"
+                  test_lineup.guard = g
+                #  possible_forwards = filter_player_list(test_lineup, fs)
+                  possible_fs.each do |f|
+                    puts "F"
+                    test_lineup.forward = f
+                    possible_us.each do |u|
+                      puts "U"
+                   # u = us.sort_by{|p| p.expected_points}.first
+                      test_lineup.utility = u
+                      lineups << test_lineup.clone if test_lineup.valid?
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+
+      return lineups.sort! { |a,b| b.expected_points <=> a.expected_points }.first
+
+    end
+
+
+
+
+    def self.generate_lineup_lm(pcs)
+
+      ### Returns an array of possible lineups
+      point_guards = pcs.map{|pc| pc.pg? && pc.expected_points != 0 ? pc : nil}.compact
+      shooting_guards = pcs.map{|pc| pc.sg? && pc.expected_points != 0 ? pc : nil}.compact
+      power_forwards = pcs.map{|pc| pc.pf? && pc.expected_points != 0 ? pc : nil}.compact
+      small_forwards = pcs.map{|pc| pc.sf? && pc.expected_points != 0 ? pc : nil}.compact
+      centers = pcs.map{|pc| pc.c? && pc.expected_points != 0 ? pc : nil}.compact
+      guards = pcs.map{|pc| pc.g? && pc.expected_points != 0 ? pc : nil}.compact
+      forwards = pcs.map{|pc| pc.f? && pc.expected_points != 0 ? pc : nil}.compact
+      utilities = pcs.map{|pc| pc.u? && pc.expected_points != 0 ? pc : nil}.compact
+
+      point_guards.sort_by!{|p| p.salary}.reverse!
+      shooting_guards.sort_by!{|p| p.salary}.reverse!
+      power_forwards.sort_by!{|p| p.salary}.reverse!
+      small_forwards.sort_by!{|p| p.salary}.reverse!
+      centers.sort_by!{|p| p.salary}.reverse!
+      guards.sort_by!{|p| p.salary}.reverse!
+      forwards.sort_by!{|p| p.salary}.reverse!
+      utilities.sort_by!{|p| p.salary}.reverse!
+
+      pgs_dom = filter_dominators(point_guards)
+      sgs_dom = filter_dominators(shooting_guards)
+      pfs_dom = filter_dominators(power_forwards)
+      sfs_dom = filter_dominators(small_forwards)
+      cs_dom = filter_dominators(centers)
+      gs_dom = filter_dominators(guards)
+      fs_dom = filter_dominators(forwards)
+      us_dom = filter_dominators(utilities)
+
+      pgs_lp = filter_lp_dominators(pgs_dom)
+      sgs_lp = filter_lp_dominators(sgs_dom)
+      pfs_lp = filter_lp_dominators(pfs_dom)
+      sfs_lp = filter_lp_dominators(sfs_dom)
+      cs_lp = filter_lp_dominators(cs_dom)
+      gs_lp = filter_lp_dominators(gs_dom)
+      fs_lp = filter_lp_dominators(fs_dom)
+      us_lp = filter_lp_dominators(us_dom)
+
+      pgs = slope_between_prev(pgs_lp)
+      sgs = slope_between_prev(sgs_lp)
+      sfs = slope_between_prev(sfs_lp)
+      pfs = slope_between_prev(pfs_lp)
+      cs = slope_between_prev(cs_lp)
+      gs = slope_between_prev(gs_lp)
+      fs = slope_between_prev(fs_lp)
+      us = slope_between_prev(us_lp)
+
+      current_best_lineup = DraftKingsLineup.new(total_salary: 50000)
+      current_best_lineup.add_player(pgs_lp.shift)
+      current_best_lineup.add_player(sgs_lp.shift)
+      current_best_lineup.add_player(sfs_lp.shift)
+      current_best_lineup.add_player(pfs_lp.shift)
+      current_best_lineup.add_player(cs_lp.shift)
+      g = gs_lp.shift
+      while current_best_lineup.player_in_lineup?(g)
+        g = gs_lp.shift
+      end
+      current_best_lineup.add_player(g)
+      f = fs_lp.shift
+      while current_best_lineup.player_in_lineup?(f)
+        f = fs_lp.shift
+      end
+      current_best_lineup.add_player(f)
+      u = us_lp.shift
+      while current_best_lineup.player_in_lineup?(u)
+        u = us_lp.shift
+      end
+      current_best_lineup.add_player(u)
+
+      remaining_players = pgs_lp + sgs_lp + pfs_lp + sfs_lp + cs_lp + gs_lp + fs_lp + us_lp
+      #non decreasing order
+      remaining_players.sort_by!{|p| p.weight_slope}.reverse!
+
+      best_at_salary = {}
+
+      best_valid_cost = current_best_lineup.current_cost
+      while remaining_players.length > 0
+
+        best_valid_cost = current_best_lineup.current_cost
+
+        player = remaining_players.shift
+        old_player = current_best_lineup.add_player(player)
+
+        best_at_salary[current_best_lineup.current_cost] = current_best_lineup.clone
+        if current_best_lineup.current_cost > 50000
+        #  new_player = current_best_lineup.add_player(old_player)
+          break
+        end
+
+      end
+
+      best_lineup = best_at_salary[best_at_salary.keys[-2]]
+      c = 50000
+      l = (player.expected_points - old_player.expected_points) / (player.salary - old_player.salary)
+      cap_P = best_lineup.expected_points
+      cap_W = best_lineup.current_cost
+      z = cap_P + (c - cap_W)*l
+
+      locked_player_ids = []
+      best_p = best_lineup.point_guard
+      possible_pgs = []
+      pgs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_pgs << p
+        end
+      end
+      if possible_pgs.length == 1
+        locked_player_ids << possible_pgs.first.player_id
+      end
+
+      best_p = best_lineup.shooting_guard
+      possible_sgs = []
+      sgs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_sgs << p
+        end
+      end
+      if possible_sgs.length == 1
+        locked_player_ids << possible_sgs.first.player_id
+      end
+
+      best_p = best_lineup.small_forward
+      possible_sfs = []
+      sfs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_sfs << p
+        end
+      end
+      if possible_sfs.length == 1
+        locked_player_ids << possible_sfs.first.player_id
+      end
+
+      best_p = best_lineup.power_forward
+      possible_pfs = []
+      pfs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_pfs << p
+        end
+      end
+      if possible_pfs.length == 1
+        locked_player_ids << possible_pfs.first.player_id
+      end
+
+      best_p = best_lineup.center
+      possible_cs = []
+      cs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if u > z || best_p.player_id == p.player_id
+          possible_cs << p
+        end
+      end
+      if possible_cs.length == 1
+        locked_player_ids << possible_cs.first.player_id
+      end
+
+      best_p = best_lineup.guard
+      possible_gs = []
+      gs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if (u > z  && !locked_player_ids.include?(p.player_id)) || best_p.player_id == p.player_id
+          possible_gs << p
+        end
+      end
+      if possible_gs.length == 1
+        locked_player_ids << possible_gs.first.player_id
+      end
+
+      best_p = best_lineup.forward
+      possible_fs = []
+      fs_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if (u > z  && !locked_player_ids.include?(p.player_id)) || best_p.player_id == p.player_id
+          possible_fs << p
+        end
+      end
+      if possible_fs.length == 1
+        locked_player_ids << possible_fs.first.player_id
+      end
+
+      best_p = best_lineup.utility
+      possible_us = []
+      us_dom.each do |p|
+        u = (cap_P - best_p.expected_points + p.expected_points) + l*(c - cap_W + best_p.salary - p.salary)
+        if (u > z  && !locked_player_ids.include?(p.player_id)) || best_p.player_id == p.player_id
+          possible_us << p
+        end
+      end
+
 
       lineups = []
       test_lineup = DraftKingsLineup.new(total_salary: 50000)
