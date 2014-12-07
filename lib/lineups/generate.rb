@@ -4,7 +4,7 @@ module Lineups
     require "rinruby"
 
     def self.generate_lineups_ids(pcs_ids)
-      pcs = PlayerCosts.find_all_by_id(pcs_ids)
+      pcs = PlayerCosts.find_all_by_id(pcs_ids).primary
       generate_lineups(pcs)
     end
 
@@ -220,10 +220,14 @@ module Lineups
     end
 
     def self.generate_lineup_r(pcs)
+      R.eval "pc_matrix <- matrix(ncol=5, nrow=#{pcs.count})"
+      pcs.each_with_index do |pc, index|
+        R.eval "pc_matrix[#{index+1},] <- c(#{pc.player.id}, #{pc.player.team_id}, '#{pc.position}', #{pc.salary}, #{pc.expected_points})"
+      end
+      R.eval "df <- as.data.frame(pc_matrix)"
       R.eval <<-EOF
 
       EOF
-
     end
 
     def self.generate_lineup_brute(pcs)
