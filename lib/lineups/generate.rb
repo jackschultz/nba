@@ -37,12 +37,12 @@ module Lineups
         pcs_arr = pcs.to_a
       end
 
-      lineup = generate_lineup_r(pcs_arr)
+      lineup = generate_lineup_dk(pcs_arr)
 
       [lineup, lineup]
     end
 
-    def self.generate_lineup_r(pcs)
+    def self.generate_lineup_dk(pcs)
       R.eval "pc_matrix <- matrix(ncol=5, nrow=#{pcs.count})"
       pcs.each_with_index do |pc, index|
         R.eval "pc_matrix[#{index+1},] <- c(#{pc.id}, #{pc.player.team_id}, '#{pc.position}', #{pc.salary}, #{pc.expected_points})"
@@ -108,6 +108,66 @@ module Lineups
 
     end
 
+    def self.generate_lineup_fd(pcs)
+
+      R.eval "pc_matrix <- matrix(ncol=5, nrow=#{pcs.count})"
+      pcs.each_with_index do |pc, index|
+        R.eval "pc_matrix[#{index+1},] <- c(#{pc.id}, #{pc.player.team_id}, '#{pc.position}', #{pc.salary}, #{pc.expected_points})"
+      end
+      R.eval "df <- as.data.frame(pc_matrix)"
+      R.eval "colnames(df) <- c('name', 'team_name', 'type_name', 'now_cost', 'total_points')"
+      R.eval <<-EOF
+
+        # The vector to optimize on
+        objective <- df$total_points
+
+        # Fitting Constraints
+        num_pointg <- 2
+        num_shootg <- 2
+        num_smallf <- 2
+        num_powf <- 2
+        num_center <- 1
+        max_cost <- 60000
+
+        # Create vectors to constrain by position
+        df$ShootingGuard <- ifelse(df$type_name == "SG", 1, 0)
+        df$PointGuard <- ifelse(df$type_name == "PG", 1, 0)
+        df$SmallForward <- ifelse(df$type_name == "SF", 1, 0)
+        df$PowerForward <- ifelse(df$type_name == "PF", 1, 0)
+        df$Center <- ifelse(df$type_name == "C", 1, 0)
+
+        # Create constraint vectors to constrain by max number of players allowed per team
+        team_constraint <- unlist(lapply(unique(df$team_name), function(x, df){
+                ifelse(df$team_name==x, 1, 0)
+        }, df=df))
+
+        # next we need the constraint directions
+        const_dir <- c("=", "=", "=", "=", "=", rep("<=", length(unique(df$team_name))+1))
+
+        # Now put the complete matrix together
+        const_mat <- matrix(c(df$ShootingGuard, df$PointGuard, df$SmallForward, df$PowerForward, df$Center,
+                              as.numeric(as.character(df$now_cost)), team_constraint),
+                            nrow=(6 + length(unique(df$team_name))), byrow=TRUE)
+        const_rhs <- c(num_pointg, num_shootg, num_smallf, num_powf, num_center, max_cost, rep(4, length(unique(df$team_name))))
+
+        # then solve the matrix
+        optimal_lineup <- lp ("max", as.numeric(as.character(objective)), const_mat, const_dir, const_rhs, all.bin=TRUE, all.int=TRUE)
+
+      EOF
+
+      players = R.pull "data.matrix(df[which(optimal_lineup$solution==1),]$name)"
+      binding.pry
+      lineup = DraftKingsLineup.new(total_salary: 50000)
+      players.to_a.each do |pcid_str|
+        pcid = pcid_str[0].to_i
+        pc = PlayerCost.find(pcid)
+        lineup.add_player(pc)
+      end
+
+      lineup
+
+
+    end
 
   end
 end
