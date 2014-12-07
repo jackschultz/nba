@@ -10,7 +10,7 @@ module Lineups
 
     def self.generate_lineups(pcs, depth = 0)
 
-      full_pcs = pcs.to_a
+      #full_pcs = pcs.to_a
       if depth == 0
         locked_positions = []
         locked_actual = []
