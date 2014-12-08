@@ -47,8 +47,8 @@ module Lineups
       self.lineup.map(&:expected_points).sum
     end
 
-    def actual_points_dk
-      self.lineup.map(&:actual_points_dk).compact.sum
+    def actual_points_fd
+      self.lineup.map(&:actual_points_fd).compact.sum
     end
 
     def lineup
