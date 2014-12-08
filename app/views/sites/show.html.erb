@@ -6,3 +6,10 @@
   </div>
 </div>
 
+<% @dates.each do |date| %>
+  <div class="row">
+    <div class="col-md-6">
+      <%= link_to date, site_games_date_path(site_id: @site.id, day: date.day, month: date.month, year: date.year) %>
+    </div>
+  </div>
+<% end %>
