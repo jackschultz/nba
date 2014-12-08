@@ -60,11 +60,11 @@ module Lineups
 
         # Fitting Constraints
         num_g <- 3
-        num_pointg <- 3
-        num_shootg <- 3
+        num_pointg <- 1
+        num_shootg <- 1
         num_f <- 3
-        num_smallf <- 3
-        num_powf <- 3
+        num_smallf <- 1
+        num_powf <- 1
         num_center <- 1
         num_util <- 8
         max_cost <- 50000
@@ -85,7 +85,7 @@ module Lineups
         }, df=df))
 
         # next we need the constraint directions
-        const_dir <- c(">=", "<=", "<=", ">=", "<=", "<=", ">=", "=", rep("<=", length(unique(df$team_name))+1))
+        const_dir <- c(">=", ">=", ">=", ">=", ">=", ">=", ">=", "=", rep("<=", length(unique(df$team_name))+1))
 
         # Now put the complete matrix together
         const_mat <- matrix(c(df$Guard, df$ShootingGuard, df$PointGuard, df$Forward, df$SmallForward, df$PowerForward, df$Center, df$Util, as.numeric(as.character(df$now_cost)), team_constraint), nrow=(9 + length(unique(df$team_name))), byrow=TRUE)
