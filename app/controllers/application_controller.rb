@@ -9,6 +9,12 @@ class ApplicationController < ActionController::Base
     cookies['XSRF-TOKEN'] = form_authenticity_token if protect_against_forgery?
   end
 
+  rescue_from "Exception" do |ex|
+    puts ex.message
+    puts ex.backtrace.join("\n")
+    raise ex
+  end
+
   protected
 
   def verified_request?
