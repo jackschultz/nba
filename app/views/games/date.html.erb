@@ -1,3 +1,5 @@
+<h1><%= link_to @site.name, site_path(@site) %></h1>
+
 <div ng-controller="GameDayCtrl">
   <div id="date-info" data-year="<%= @date.year %>" data-month="<%= @date.month %>" data-day="<%= @date.day %>"></div>
   <div id="site-info" data-site-id="<%= @site.id %>"></div>

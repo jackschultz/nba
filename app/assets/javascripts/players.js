@@ -13,7 +13,7 @@
       data.year = parseInt($("#date-info").data('year'), 10);
       data.month = parseInt($("#date-info").data('month'), 10);
       data.day = parseInt($("#date-info").data('day'), 10);
-      $http.get("/site/" + site_id + "/player_costs?" + $.param(data)).
+      $http.get("/sites/" + site_id + "/player_costs?" + $.param(data)).
         success(function(data, status, headers, config) {
           $scope.players = data;
           for (var i = 0; i < data.length; i++) {
@@ -41,7 +41,7 @@
       data.month = parseInt($("#date-info").data('month'), 10);
       data.day = parseInt($("#date-info").data('day'), 10);
       data.healthy = false;
-      $http.put("/site/" + site_id + "/player_costs/" + player.id, data).
+      $http.put("/sites/" + site_id + "/player_costs/" + player.id, data).
         success(function(data, status, headers, config) {
           $scope.players.splice($scope.players.indexOf(player),1);
           $scope.players.push(data[0]);
@@ -55,7 +55,7 @@
       data.month = parseInt($("#date-info").data('month'), 10);
       data.day = parseInt($("#date-info").data('day'), 10);
       data.healthy = true;
-      $http.put("/site/" + site_id + "/player_costs/" + player.id, data).
+      $http.put("/sites/" + site_id + "/player_costs/" + player.id, data).
         success(function(data, status, headers, config) {
           $scope.players.splice($scope.players.indexOf(player),1);
           $scope.players.push(data[0]);
@@ -88,7 +88,7 @@
       data.games = game_ids;
       data.locks = locked_ids;
 
-      $http.get("/site/" + site_id + "/lineups?" + $.param(data)).
+      $http.get("/sites/" + site_id + "/lineups?" + $.param(data)).
         success(function(data, status, headers, config) {
           $scope.lineup1 = data[0];
           $scope.lineup2 = data[1];

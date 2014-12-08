@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   resources :teams, only: [:index, :show, :edit, :update]
   resources :players
 
-  resources :site, only: [:index, :show]  do
+  resources :sites, only: [:index, :show]  do
     get '/games/:year/:month/:day' => 'games#date', as: :games_date, constraints: {
       year:       /\d{4}/,
       month:      /\d{1,2}/,
