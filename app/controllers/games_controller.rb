@@ -1,5 +1,6 @@
 class GamesController < ApplicationController
 
+  before_action :set_site, only: [:date]
   before_action :set_game, only: [:show]
 
   def index
@@ -18,6 +19,10 @@ class GamesController < ApplicationController
 
   def set_game
     @game = Game.find(params[:id])
+  end
+
+  def set_site
+    @site = Site.find(params[:site_id])
   end
 
 end

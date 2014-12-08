@@ -1,4 +1,6 @@
 class LineupsController < ApplicationController
+
+  before_action :set_site
   before_action :set_date, only: [:index]
 
   def index
@@ -8,7 +10,7 @@ class LineupsController < ApplicationController
       gids = params[:games].map{|gid| gid.to_i}
       @games = Game.find(gids)
     end
-    @player_costs = PlayerCost.from_games(@games.map(&:id)).positive.primary.healthy
+    @player_costs = @site.player_costs.from_games(@games.map(&:id)).positive.primary.healthy
     if !params[:locks].nil?
       locked_ids = params[:locks].map{|lid| lid.to_i}
       @player_costs.each do |pc|
@@ -25,6 +27,10 @@ class LineupsController < ApplicationController
 
   def set_date
     @date = Date.new(params[:year].to_i,params[:month].to_i,params[:day].to_i)
+  end
+
+  def set_site
+    @site = Site.find(params[:site_id])
   end
 
 end
