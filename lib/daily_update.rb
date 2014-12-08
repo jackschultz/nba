@@ -5,6 +5,7 @@ module DailyUpdate
     yesterday = date - 1.day
     Fetching::Games.process_games_range(yesterday, yesterday, true, true)
     PlayerInfo::SalaryUpdate.update_draft_kings(date)
+    PlayerInfo::SalaryUpdate.update_fan_duel(date)
   #  Fetching::Players.process_starters
 =begin
     game_ids = Game.today.map(&:id)

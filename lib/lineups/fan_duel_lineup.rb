@@ -84,7 +84,7 @@ module Lineups
         data[:players] << p.to_json
       end
       data[:expected_points] = self.expected_points
-      data[:actual_points_dk] = self.actual_points_dk
+      data[:actual_points_fd] = 10#self.actual_points_dk
       data[:salary] = self.current_cost
       data
     end

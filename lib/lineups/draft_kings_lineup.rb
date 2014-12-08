@@ -14,27 +14,14 @@ module Lineups
     def initialize(opts={})
       super(opts)
       @total_salary = 50000
-      if opts[:player_cost_ids]
-        pcids = opts[:player_cost_ids]
-        @point_guard = PlayerCost.find(pcids[0])
-        @shooting_guard = PlayerCost.find(pcids[1])
-        @small_forward = PlayerCost.find(pcids[2])
-        @power_forward = PlayerCost.find(pcids[3])
-        @center = PlayerCost.find(pcids[4])
-        @guard = PlayerCost.find(pcids[5])
-        @forward = PlayerCost.find(pcids[6])
-        @utility = PlayerCost.find(pcids[7])
-      else
-        @point_guard = nil
-        @shooting_guard = nil
-        @small_forward = nil
-        @power_forward = nil
-        @center = nil
-        @guard = nil
-        @forward = nil
-        @utility = nil
-      end
-
+      @point_guard = nil
+      @shooting_guard = nil
+      @small_forward = nil
+      @power_forward = nil
+      @center = nil
+      @guard = nil
+      @forward = nil
+      @utility = nil
     end
 
     def valid?
@@ -154,141 +141,5 @@ module Lineups
         end
       end
     end
-
-=begin
-    def add_player(new_player)
-      if player_in_lineup?(new_player)
-        return nil
-      else
-        if new_player.pg?
-          old_player = self.point_guard
-          self.point_guard = new_player
-        elsif new_player.sg?
-          old_player = self.shooting_guard
-          self.shooting_guard = new_player
-        elsif new_player.sf?
-          old_player = self.small_forward
-          self.small_forward = new_player
-        elsif new_player.pf?
-          old_player = self.power_forward
-          self.power_forward = new_player
-        elsif new_player.c?
-          old_player = self.center
-          self.center = new_player
-        elsif new_player.g?
-          old_player = self.guard
-          self.guard = new_player
-        elsif new_player.f?
-          old_player = self.forward
-          self.forward = new_player
-        elsif new_player.u?
-          old_player = self.utility
-          self.utility = new_player
-        end
-        return old_player
-      end
-    end
-
-    def add_player(new_player)
-      if new_player.pg?
-        prev_player = self.point_guard
-        self.point_guard = new_player
-        if self.valid_cost?
-          if !self.valid_players?
-            self.small_forward = prev_player
-          end
-          return true
-        else
-          self.point_guard = prev_player
-          return false
-        end
-      elsif new_player.sg?
-        prev_player = self.shooting_guard
-        self.shooting_guard = new_player
-        if self.valid_cost?
-          if !self.valid_players?
-            self.small_forward = prev_player
-          end
-          return true
-        else
-          self.shooting_guard = prev_player
-          return false
-        end
-      elsif new_player.sf?
-        prev_player = self.small_forward
-        self.small_forward = new_player
-        if self.valid_cost?
-          if !self.valid_players?
-            self.small_forward = prev_player
-          end
-          return true
-        else
-          self.small_forward = prev_player
-          return false
-        end
-      elsif new_player.pf?
-        prev_player = self.power_forward
-        self.power_forward = new_player
-        if self.valid_cost?
-          if !self.valid_players?
-            self.small_forward = prev_player
-          end
-          return true
-        else
-          self.power_forward = prev_player
-          return false
-        end
-      elsif new_player.c?
-        prev_player = self.center
-        self.center = new_player
-        if self.valid_cost?
-          if !self.valid_players?
-            self.small_forward = prev_player
-          end
-          return true
-        else
-          self.center = prev_player
-          return false
-        end
-      elsif new_player.g?
-        prev_player = self.guard
-        self.guard = new_player
-        if self.valid_cost?
-          if !self.valid_players?
-            self.small_forward = prev_player
-          end
-          return true
-        else
-          self.guard = prev_player
-          return false
-        end
-      elsif new_player.f?
-        prev_player = self.forward
-        self.forward = new_player
-        if self.valid_cost?
-          if !self.valid_players?
-            self.small_forward = prev_player
-          end
-          return true
-        else
-          self.forward = prev_player
-          return false
-        end
-      elsif new_player.u?
-        prev_player = self.utility
-        self.utility = new_player
-        if self.valid_cost?
-          if !self.valid_players?
-            self.small_forward = prev_player
-          end
-          return true
-        else
-          self.utility = prev_player
-          return false
-        end
-      end
-    end
-=end
-
   end
 end

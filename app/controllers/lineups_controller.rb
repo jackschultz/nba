@@ -19,7 +19,8 @@ class LineupsController < ApplicationController
         end
       end
     end
-    @lineup = Lineups::Generate.generate_lineups(@player_costs)
+    site_id = params[:site_id].to_i
+    @lineup = Lineups::Generate.generate_lineups(@player_costs, site_id)
     render json: [@lineup.first.to_json, @lineup.last.to_json]
   end
 

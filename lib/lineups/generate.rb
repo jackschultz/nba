@@ -3,41 +3,41 @@ module Lineups
 
     require "rinruby"
 
-    def self.generate_lineups_ids(pcs_ids)
+    def self.generate_lineups_ids(pcs_ids, site_id)
       pcs = PlayerCosts.find_all_by_id(pcs_ids).primary
       generate_lineups(pcs)
     end
 
-    def self.generate_lineups(pcs, depth = 0)
+    def self.generate_lineups(pcs, site_id)
 
-      #full_pcs = pcs.to_a
-      if depth == 0
-        locked_positions = []
-        locked_actual = []
-        locked = []
-        pcs.each do |pc|
-          if pc.locked == true
-            locked << pc
-          end
+      locked_positions = []
+      locked_actual = []
+      locked = []
+      pcs.each do |pc|
+        if pc.locked == true
+          locked << pc
         end
-        locked.each do |lock|
-          lock_check = lock
-          while locked_positions.include?(lock_check.position)
-            lock_check = PlayerCost.where(game_id: lock.game_id, player_id: lock.player_id, position: lock_check.lower_position).first
-          end
-          locked_actual << lock_check
-          locked_positions << lock_check.position
-          pcs = pcs.where('position != ?', lock_check.position)
+      end
+      locked.each do |lock|
+        lock_check = lock
+        while locked_positions.include?(lock_check.position)
+          lock_check = PlayerCost.where(game_id: lock.game_id, player_id: lock.player_id, position: lock_check.lower_position).first
         end
-        pcs_arr = pcs.to_a
-        locked_actual.each do |lock|
-          pcs_arr << lock
-        end
-      else
-        pcs_arr = pcs.to_a
+        locked_actual << lock_check
+        locked_positions << lock_check.position
+        pcs = pcs.where('position != ?', lock_check.position)
+      end
+      pcs_arr = pcs.to_a
+      locked_actual.each do |lock|
+        pcs_arr << lock
       end
 
-      lineup = generate_lineup_dk(pcs_arr)
+      site = Site.find(site_id)
+      if site.name == "Fan Duel"
+        lineup = generate_lineup_fd(pcs_arr)
+      elsif site.name == "Draft Kings"
+        lineup = generate_lineup_dk(pcs_arr)
+      end
 
       [lineup, lineup]
     end
@@ -97,7 +97,7 @@ module Lineups
       EOF
 
       players = R.pull "data.matrix(df[which(asdf$solution==1),]$name)"
-      lineup = DraftKingsLineup.new(total_salary: 50000)
+      lineup = DraftKingsLineup.new
       players.to_a.each do |pcid_str|
         pcid = pcid_str[0].to_i
         pc = PlayerCost.find(pcid)
@@ -156,8 +156,7 @@ module Lineups
       EOF
 
       players = R.pull "data.matrix(df[which(optimal_lineup$solution==1),]$name)"
-      binding.pry
-      lineup = DraftKingsLineup.new(total_salary: 50000)
+      lineup = FanDuelLineup.new
       players.to_a.each do |pcid_str|
         pcid = pcid_str[0].to_i
         pc = PlayerCost.find(pcid)
