@@ -124,14 +124,6 @@ ActiveRecord::Schema.define(version: 20141209021139) do
     t.string   "alt_nickname"
   end
 
-  create_table "user_player_costs", force: true do |t|
-    t.integer  "player_cost_id"
-    t.integer  "user_id"
-    t.float    "expected_points"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false

@@ -23,8 +23,6 @@ class PlayerCost < ActiveRecord::Base
   belongs_to :player
   belongs_to :game
 
-  has_many :user_player_costs
-
   scope :point_guards , -> { where(:position => "PG") }
   scope :shooting_guards , -> { where(:position => "SG") }
   scope :small_forwards, -> { where(:position => "SF") }
