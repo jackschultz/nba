@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141209011905) do
+ActiveRecord::Schema.define(version: 20141209021139) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(version: 20141209011905) do
     t.float    "actual_points_dk"
     t.boolean  "healthy",          default: true
     t.boolean  "starting",         default: false
+    t.integer  "user_id"
   end
 
   add_index "player_costs", ["game_id"], name: "index_player_costs_on_game_id", using: :btree

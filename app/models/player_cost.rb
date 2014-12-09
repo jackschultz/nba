@@ -14,6 +14,7 @@
 #  actual_points_dk :float
 #  healthy          :boolean          default(TRUE)
 #  starting         :boolean          default(FALSE)
+#  user_id          :integer
 #
 
 class PlayerCost < ActiveRecord::Base

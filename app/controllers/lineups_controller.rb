@@ -10,7 +10,11 @@ class LineupsController < ApplicationController
       gids = params[:games].map{|gid| gid.to_i}
       @games = Game.find(gids)
     end
-    @player_costs = @site.player_costs.from_games(@games.map(&:id)).positive.primary.healthy
+    if current_user && @site.player_costs.from_games(@games.map(&:id)).where(user_id: current_user.id).count > 0
+      @player_costs = @site.player_costs.includes(:player).from_games(@games.map(&:id)).positive.healthy
+    else
+      @player_costs = @site.player_costs.includes(:player).from_games(@games.map(&:id)).positive.healthy
+    end
     if !params[:locks].nil?
       locked_ids = params[:locks].map{|lid| lid.to_i}
       @player_costs.each do |pc|
