@@ -19,8 +19,13 @@ class PlayerCostsController < ApplicationController
   end
 
   def index
-    @games = Game.on_date(@date)#Game.where(date: @date..@date+1.day-1.hour)
-    @player_costs = @site.player_costs.primary.from_games(@games.map(&:id))
+    @games = Game.on_date(@date)
+    if current_user && @site.player_costs.from_games(@games.map(&:id)).where(user_id: current_user.id).count > 0
+      @player_costs = @site.player_costs.includes(:player).where(user_id: current_user.id).from_games(@games.map(&:id))
+    else
+      @player_costs = @site.player_costs.includes(:player).from_games(@games.map(&:id))
+    end
+
     render json: @player_costs, include: :player
   end
 
