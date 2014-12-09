@@ -36,6 +36,8 @@ class PlayerCost < ActiveRecord::Base
   scope :starting, -> { where(starting: true) }
   scope :healthy, -> { where(healthy: true) }
   scope :positive, -> { where("expected_points > 0") }
+  scope :no_user, -> { where(user_id: nil) }
+  scope :for_user, lambda{ |user_id| where(user_id: user_id) }
 
   scope :from_games, lambda{ |game_ids| where(game_id: game_ids) }
 

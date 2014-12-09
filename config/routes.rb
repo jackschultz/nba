@@ -16,6 +16,12 @@ Rails.application.routes.draw do
       day:        /\d{1,2}/
     }
 
+    post '/games/:year/:month/:day/player_costs_uploads' => 'player_costs_uploads#create', as: :player_costs_uploads, constraints: {
+      year:       /\d{4}/,
+      month:      /\d{1,2}/,
+      day:        /\d{1,2}/
+    }
+
     resources :player_costs, only: [:update, :index]
 
     resources :lineups, only: [:index]
