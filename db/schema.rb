@@ -11,13 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141209021139) do
+ActiveRecord::Schema.define(version: 20141210011743) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "conferences", force: true do |t|
     t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "coupons", force: true do |t|
+    t.string   "code"
+    t.string   "free_trial_length"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -39,6 +46,18 @@ ActiveRecord::Schema.define(version: 20141209021139) do
   end
 
   add_index "games", ["date"], name: "index_games_on_date", using: :btree
+
+  create_table "plans", force: true do |t|
+    t.string   "name"
+    t.string   "stripe_id"
+    t.float    "price"
+    t.string   "interval"
+    t.text     "features"
+    t.boolean  "highlight"
+    t.integer  "display_order"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "player_costs", force: true do |t|
     t.integer  "player_id"
@@ -113,6 +132,18 @@ ActiveRecord::Schema.define(version: 20141209021139) do
     t.float    "score_draft_kings"
   end
 
+  create_table "subscriptions", force: true do |t|
+    t.string   "stripe_id"
+    t.integer  "plan_id"
+    t.string   "last_four"
+    t.integer  "coupon_id"
+    t.string   "card_type"
+    t.float    "current_price"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "teams", force: true do |t|
     t.string   "nickname"
     t.string   "city"
@@ -122,6 +153,14 @@ ActiveRecord::Schema.define(version: 20141209021139) do
     t.integer  "nba_id"
     t.integer  "division_id"
     t.string   "alt_nickname"
+  end
+
+  create_table "user_player_costs", force: true do |t|
+    t.integer  "player_cost_id"
+    t.integer  "user_id"
+    t.float    "expected_points"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "users", force: true do |t|

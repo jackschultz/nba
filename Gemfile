@@ -28,6 +28,7 @@ gem 'faraday_middleware'
 gem 'faraday'
 gem 'nokogiri'
 gem 'rinruby', require: false
+gem 'koudoku'
 
 group :development do
   gem 'foreman'
