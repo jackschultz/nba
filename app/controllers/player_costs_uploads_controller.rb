@@ -1,50 +1,21 @@
 class PlayerCostsUploadsController < ApplicationController
 
   before_action :set_site
-  before_action :set_date, only: [:create]
+  before_action :set_date
 
   def create
-    @games = Game.on_date(@date)
-    #we want to grab all the players costs for the user if they've already uploaded,
-    #otherwise, just the pcs with no user
-    if current_user && @site.player_costs.from_games(@games.map(&:id)).where(user_id: current_user.id).count > 0
-      @player_costs = @site.player_costs.for_user(current_user.id).from_games(@games.map(&:id))
-      #update the pcs for this user
-    else
-      @player_costs = @site.player_costs.no_user.from_games(@games.map(&:id))
-      #create new pcs for this user
-      @player_costs.each do |pc|
-        user_pc = pc.dup
-        user_pc.user_id = current_user.id
+    file = params[:projections]
+    if !file.nil?
+      filename = file.path
+      if @site.fan_duel?
+        PlayerCost.import_for_user_fd(filename, @date, current_user)
+      elsif @site.draft_kings?
+        PlayerCost.import_for_user_dk(filename, @date, current_user)
       end
-    end
-
-
-  end
-
-  def update
-    pcs = @site.player_costs.where(player_id: @player_cost.player_id, game_id: @player_cost.game_id, site_id: @player_cost.site_id)
-    pcs.each do |pc|
-      pc.locked = params[:locked] if !params[:locked].nil? && pc.primary?
-      pc.healthy = params[:healthy] if !params[:healthy].nil?
-      if !pc.healthy?
-        pc.locked = false
-      end
-      pc.save
-    end
-    pc = pcs.primary
-    render json: pc, include: :player
-  end
-
-  def index
-    @games = Game.on_date(@date)
-    if current_user && @site.player_costs.from_games(@games.map(&:id)).where(user_id: current_user.id).count > 0
-      @player_costs = @site.player_costs.includes(:player).where(user_id: current_user.id).from_games(@games.map(&:id))
+      redirect_to site_games_date_path(site_id: @site.id, year: @date.year, month: @date.month, day: @date.day)
     else
-      @player_costs = @site.player_costs.includes(:player).from_games(@games.map(&:id))
+      redirect_to site_games_date_path(site_id: @site.id, year: @date.year, month: @date.month, day: @date.day)
     end
-
-    render json: @player_costs, include: :player
   end
 
   private

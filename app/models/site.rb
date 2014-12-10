@@ -13,4 +13,12 @@ class Site < ActiveRecord::Base
 
   has_many :player_costs
 
+  def fan_duel?
+    self.name == "Fan Duel"
+  end
+
+  def draft_kings?
+    self.name == "Draft Kings"
+  end
+
 end
